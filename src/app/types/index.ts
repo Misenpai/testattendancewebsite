@@ -11,10 +11,11 @@ export interface Audio {
 
 export interface Attendance {
   date: string;
-  checkInTime: string;
-  checkOutTime?: string;
-  sessionType?: 'FORENOON' | 'AFTERNOON';
-  attendanceType?: 'FULL_DAY' | 'HALF_DAY';
+  checkinTime: string;
+  checkoutTime?: string;
+  sessionType?: 'FN' | 'AF';
+  isFullDay?: boolean;
+  isHalfDay?: boolean;
   isCheckedOut?: boolean;
   location?: string;
   takenLocation?: string;
@@ -23,25 +24,35 @@ export interface Attendance {
 }
 
 export interface User {
-  empCode: string;  // Changed from empId
+  employeeNumber: string;
   username: string;
-  email: string;
-  department: string;
-  locationType: 'APPROX' | 'ABSOLUTE';
-  isActive: boolean;
-  monthlyStatistics?: {
+  empClass: string;
+  dateOfResign?: string;
+  projects: {
+    projectCode: string;
+    department: string;
+  }[];
+  hasActiveFieldTrip: boolean;
+  monthlyStatistics: {
     totalDays: number;
     fullDays: number;
     halfDays: number;
+    notCheckedOut: number;
   };
   attendances: Attendance[];
-  fieldTrips?: FieldTrip[];
 }
 
 export interface FieldTrip {
   startDate: string;
   endDate: string;
   description?: string;
+}
+
+export interface PIUser {
+  principalInvestigatorKey: string;
+  username: string;
+  projectCode: string;
+  projects?: string[];
 }
 
 export interface ApiResponse {
@@ -52,8 +63,23 @@ export interface ApiResponse {
   data: User[];
 }
 
-export interface Filters {
-  month: number;
-  year: number;
-  apiBase: string;
+export interface CalendarDay {
+  date: string;
+  isHoliday: boolean;
+  isWeekend: boolean;
+  description?: string;
+  attendances: {
+    [employeeNumber: string]: {
+      present: boolean;
+      type: 'FULL_DAY' | 'HALF_DAY' | 'IN_PROGRESS';
+      username: string;
+    };
+  };
+}
+
+export interface AuthUser {
+  username: string;
+  projectCode: string;
+  projects: string[];
+  token: string;
 }

@@ -1,18 +1,24 @@
-import type { Metadata } from 'next'
+// src/app/layout.tsx
+import type { Metadata } from 'next';
+import { AuthProvider } from './hooks/useAuth';
 
 export const metadata: Metadata = {
-  title: 'Attendance Admin Dashboard',
-  description: 'View and manage employee attendance records',
-}
+  title: 'PI Dashboard - Attendance Management',
+  description: 'Principal Investigator Dashboard for managing project attendance',
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
-  )
+  );
 }
