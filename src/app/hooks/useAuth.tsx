@@ -33,43 +33,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
-    try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3000/api';
-      
-      const response = await fetch(`${API_BASE}/pi/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+  try {
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3000/api';
+    
+    const response = await fetch(`${API_BASE}/pi/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
 
-      const data = await response.json();
+    console.log('Login HTTP status:', response.status); // Debug: Check status code (e.g., 200, 401, 404, 500)
 
-      if (data.success) {
-        const authUser: AuthUser = {
-          username: data.username,
-          projectCode: data.projectCode,
-          projects: data.projects || [data.projectCode],
-          token: data.token,
-        };
+    const data = await response.json();
+    console.log('Login response data:', data); // Debug: See what the backend returns (e.g., {success: false, error: '...'})
 
-        setUser(authUser);
-        localStorage.setItem('pi_token', data.token);
-        localStorage.setItem('pi_user', JSON.stringify(authUser));
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
+    if (data.success) {
+      const authUser: AuthUser = {
+        username: data.username,
+        projectCode: data.projectCode,
+        projects: data.projects || [data.projectCode],
+        token: data.token,
+      };
+
+      setUser(authUser);
+      localStorage.setItem('pi_token', data.token);
+      localStorage.setItem('pi_user', JSON.stringify(authUser));
+      return true;
     }
-  };
+    return false;
+  } catch (error) {
+    console.error('Login error:', error); // This should log network errors (e.g., "Failed to fetch")
+    return false;
+  }
+};
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('pi_token');
     localStorage.removeItem('pi_user');
+    
+    // FIX: Also remove the cookie on logout
+    document.cookie = 'pi_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   };
 
   return (

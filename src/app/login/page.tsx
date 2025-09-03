@@ -23,7 +23,7 @@ export default function LoginPage() {
     const success = await login(username, password);
     
     if (success) {
-      router.push('/dashboard');
+      router.push('/');
     } else {
       setError('Invalid username or password');
     }
@@ -66,6 +66,7 @@ export default function LoginPage() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+        
       </div>
     </div>
   );
