@@ -1,4 +1,4 @@
-// src/app/dashboard/calendar/page.tsx
+// src/app/dashboard/calendar/page.tsx (note: corrected spelling from 'calender' to 'calendar')
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -57,7 +57,6 @@ export default function CalendarPage() {
           
           <select 
             value={filters.year} 
-            // FIX: Changed e.target.year to e.target.value
             onChange={(e) => setFilters(prev => ({ ...prev, year: parseInt(e.target.value) }))}
           >
             <option value="2025">2025</option>

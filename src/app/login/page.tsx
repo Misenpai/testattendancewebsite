@@ -23,7 +23,8 @@ export default function LoginPage() {
     const success = await login(username, password);
     
     if (success) {
-      router.push('/');
+      // Redirect to dashboard after successful login
+      router.push('/dashboard');
     } else {
       setError('Invalid username or password');
     }
@@ -67,6 +68,13 @@ export default function LoginPage() {
           </button>
         </form>
         
+        <div className="login-help">
+          <p><strong>Debug Information:</strong></p>
+          <ul>
+            <li>API Base: {process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3000/api'}</li>
+            <li>Login Endpoint: /pi/login</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

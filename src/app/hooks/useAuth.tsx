@@ -13,6 +13,18 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to set cookie
+function setCookie(name: string, value: string, days: number = 7) {
+  const expires = new Date();
+  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
+
+// Helper function to delete cookie
+function deleteCookie(name: string) {
+  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,55 +39,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch {
         localStorage.removeItem('pi_token');
         localStorage.removeItem('pi_user');
+        deleteCookie('pi_token');
       }
     }
     setIsLoading(false);
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
-  try {
-    const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3000/api';
-    
-    const response = await fetch(`${API_BASE}/pi/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3000/api';
+      
+      const response = await fetch(`${API_BASE}/pi/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    console.log('Login HTTP status:', response.status); // Debug: Check status code (e.g., 200, 401, 404, 500)
+      console.log('Login HTTP status:', response.status);
 
-    const data = await response.json();
-    console.log('Login response data:', data); // Debug: See what the backend returns (e.g., {success: false, error: '...'})
+      const data = await response.json();
+      console.log('Login response data:', data);
 
-    if (data.success) {
-      const authUser: AuthUser = {
-        username: data.username,
-        projectCode: data.projectCode,
-        projects: data.projects || [data.projectCode],
-        token: data.token,
-      };
+      if (data.success) {
+        const authUser: AuthUser = {
+          username: data.username,
+          projectCode: data.projectCode,
+          projects: data.projects || [data.projectCode],
+          token: data.token,
+        };
 
-      setUser(authUser);
-      localStorage.setItem('pi_token', data.token);
-      localStorage.setItem('pi_user', JSON.stringify(authUser));
-      return true;
+        setUser(authUser);
+        localStorage.setItem('pi_token', data.token);
+        localStorage.setItem('pi_user', JSON.stringify(authUser));
+        
+        // IMPORTANT: Set the cookie that middleware expects
+        setCookie('pi_token', data.token);
+        
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
     }
-    return false;
-  } catch (error) {
-    console.error('Login error:', error); // This should log network errors (e.g., "Failed to fetch")
-    return false;
-  }
-};
+  };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('pi_token');
     localStorage.removeItem('pi_user');
-    
-    // FIX: Also remove the cookie on logout
-    document.cookie = 'pi_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    deleteCookie('pi_token');
   };
 
   return (
