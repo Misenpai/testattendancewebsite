@@ -1,4 +1,5 @@
 // src/app/types/index.ts
+
 export interface Photo {
   url: string;
   type?: string;
@@ -17,8 +18,16 @@ export interface Attendance {
   isFullDay?: boolean;
   isHalfDay?: boolean;
   isCheckedOut?: boolean;
-  location?: string;
-  takenLocation?: string;
+  takenLocation?: string; // Kept for backward compatibility if needed
+  location?: {
+    takenLocation?: string;
+    latitude?: number | null;
+    longitude?: number | null;
+    county?: string | null;
+    state?: string | null;
+    postcode?: string | null;
+    address?: string | null;
+  };
   photos: Photo[];
   audio: Audio[];
 }

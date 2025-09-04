@@ -396,15 +396,13 @@ export default function Modal({ user, onClose }: ModalProps): React.JSX.Element 
             ) : (
               <div className="attendance-list">
                 {filteredAttendances.map((att, index: number) => {
-                  const date = new Date(att.date);
-                  console.log("checkinTime", att.checkinTime)
-                  const checkInDate = new Date(`${att.date}T${att.checkinTime}`);
-                  const checkOutDate = att.checkoutTime ? new Date(`${att.date}T${att.checkoutTime}`) : null;
+                  const checkInDate = new Date(att.checkinTime);
+                  const checkOutDate = att.checkoutTime ? new Date(att.checkoutTime) : null;
                   
                   return (
                     <div key={index} className="attendance-item card">
                       <div className="attendance-date">
-                        {date.toLocaleDateString('en-US', { 
+                        {checkInDate.toLocaleDateString('en-US', { 
                           weekday: 'long', 
                           year: 'numeric', 
                           month: 'long', 
@@ -444,7 +442,7 @@ export default function Modal({ user, onClose }: ModalProps): React.JSX.Element 
                         </div>
                         <div className="detail-row">
                           <div className="detail-item">
-                            <strong>Location:</strong> <span>{att.takenLocation || att.location || 'Not specified'}</span>
+                            <strong>Location:</strong> <span>{att.location?.address || att.takenLocation || 'Not specified'}</span>
                           </div>
                           <div className="detail-item">
                             <strong>Status:</strong> 
