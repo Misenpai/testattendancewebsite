@@ -1,5 +1,5 @@
 // src/app/components/StatsCards.tsx
-import type { ApiResponse } from '../types';
+import type { ApiResponse } from "../types";
 
 interface StatsCardsProps {
   data: ApiResponse | null;
@@ -25,15 +25,16 @@ export default function StatsCards({ data }: StatsCardsProps) {
     );
   }
 
-  const presentToday = data.data.filter(u => 
-    u.attendances.some(a => {
+  const presentToday = data.data.filter((u) =>
+    u.attendances.some((a) => {
       const today = new Date().toDateString();
       const attDate = new Date(a.date).toDateString();
-      return today === attDate && a.isCheckedOut !== false;
+      // Present = record exists for today (regardless of checkout)
+      return today === attDate;
     })
   ).length;
 
-  const onFieldTrip = data.data.filter(u => u.hasActiveFieldTrip).length;
+  const onFieldTrip = data.data.filter((u) => u.hasActiveFieldTrip).length;
 
   return (
     <div className="stats-grid">
@@ -54,7 +55,9 @@ export default function StatsCards({ data }: StatsCardsProps) {
       </div>
       <div className="stat-card">
         <h3>This Month</h3>
-        <div className="stat-value">{data.month}/{data.year}</div>
+        <div className="stat-value">
+          {data.month}/{data.year}
+        </div>
         <div className="stat-subtitle">Viewing period</div>
       </div>
     </div>

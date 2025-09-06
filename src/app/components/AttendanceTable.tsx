@@ -1,9 +1,9 @@
 // src/app/components/AttendanceTable.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import FieldTripModal from './FieldTripModel';
-import type { ApiResponse, User, FieldTrip } from '../types';
+import { useState } from "react";
+import FieldTripModal from "./FieldTripModel";
+import type { ApiResponse, User, FieldTrip } from "../types";
 
 interface AttendanceTableProps {
   data: ApiResponse | null;
@@ -20,7 +20,9 @@ export default function AttendanceTable({
   onViewDetails,
   onDownloadExcel,
 }: AttendanceTableProps) {
-  const [fieldTripModalUser, setFieldTripModalUser] = useState<User | null>(null);
+  const [fieldTripModalUser, setFieldTripModalUser] = useState<User | null>(
+    null
+  );
 
   if (loading) {
     return (
@@ -61,7 +63,9 @@ export default function AttendanceTable({
         <div className="table-header">
           <h2>Employee Attendance Records</h2>
           <div className="header-info">
-            <span>Month: {data.month}/{data.year}</span>
+            <span>
+              Month: {data.month}/{data.year}
+            </span>
             <span>Total Users: {data.totalUsers}</span>
           </div>
         </div>
@@ -87,31 +91,37 @@ export default function AttendanceTable({
                 <td>{user.empClass}</td>
                 <td>
                   <div className="project-list">
-                    {user.projects.map(p => (
+                    {user.projects.map((p) => (
                       <span key={p.projectCode} className="project-tag">
                         {p.projectCode}
                       </span>
                     ))}
                   </div>
                 </td>
-                
+
                 <td>
                   <div className="monthly-stats">
-                    <span 
-                      title="Full Days" 
-                      style={{ background: '#d4edda', color: '#155724' }}
+                    <span
+                      title="Full Days"
+                      style={{ background: "#d4edda", color: "#155724" }}
                     >
                       {user.monthlyStatistics.fullDays}F
                     </span>
-                    <span 
+                    <span
                       title="Half Days"
-                      style={{ background: '#cce5ff', color: '#004085' }}
+                      style={{ background: "#cce5ff", color: "#004085" }}
                     >
                       {user.monthlyStatistics.halfDays}H
                     </span>
-                    <span 
+                    <span
+                      title="Not Checked Out"
+                      style={{ background: "#fff3cd", color: "#856404" }}
+                    >
+                      {user.monthlyStatistics.notCheckedOut}NC
+                    </span>
+                    <span
                       title="Total Days"
-                      style={{ background: '#f8f9fa', color: '#495057' }}
+                      style={{ background: "#f8f9fa", color: "#495057" }}
                     >
                       {user.monthlyStatistics.totalDays.toFixed(1)}T
                     </span>
@@ -125,9 +135,7 @@ export default function AttendanceTable({
                         🏃‍♂️ On Field Trip
                       </span>
                     ) : (
-                      <span className="status-badge inactive">
-                        🏢 Campus
-                      </span>
+                      <span className="status-badge inactive">🏢 Campus</span>
                     )}
                     <button
                       className="manage-trips-btn"
@@ -167,11 +175,15 @@ export default function AttendanceTable({
           onSave={async (employeeNumber: string, fieldTrips: FieldTrip[]) => {
             try {
               // Call API to save field trips
-              console.log('Saving field trips for:', employeeNumber, fieldTrips);
-              alert('Field trips saved successfully!');
+              console.log(
+                "Saving field trips for:",
+                employeeNumber,
+                fieldTrips
+              );
+              alert("Field trips saved successfully!");
             } catch (error) {
-              console.error('Error saving field trips:', error);
-              alert('Failed to save field trips.');
+              console.error("Error saving field trips:", error);
+              alert("Failed to save field trips.");
             }
           }}
         />

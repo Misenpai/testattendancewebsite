@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import type { User, Photo, Audio, Attendance } from '../types';
+import React, { useState, useEffect } from "react";
+import type { User, Photo, Audio, Attendance } from "../types";
 
 interface ModalProps {
   user: User;
@@ -293,14 +293,19 @@ const modalStyles = `
 }
 `;
 
-export default function Modal({ user, onClose }: ModalProps): React.JSX.Element {
-  const [searchDate, setSearchDate] = useState<string>('');
-  const [filteredAttendances, setFilteredAttendances] = useState(user.attendances);
+export default function Modal({
+  user,
+  onClose,
+}: ModalProps): React.JSX.Element {
+  const [searchDate, setSearchDate] = useState<string>("");
+  const [filteredAttendances, setFilteredAttendances] = useState(
+    user.attendances
+  );
 
   useEffect(() => {
     if (searchDate) {
-      const filtered = user.attendances.filter(att => {
-        const attDate = new Date(att.date).toISOString().split('T')[0];
+      const filtered = user.attendances.filter((att) => {
+        const attDate = new Date(att.date).toISOString().split("T")[0];
         return attDate === searchDate;
       });
       setFilteredAttendances(filtered);
@@ -310,29 +315,29 @@ export default function Modal({ user, onClose }: ModalProps): React.JSX.Element 
   }, [searchDate, user.attendances]);
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>): void => {
-    if ((e.target as HTMLElement).classList.contains('modal-backdrop')) {
+    if ((e.target as HTMLElement).classList.contains("modal-backdrop")) {
       onClose();
     }
   };
 
   const getSessionColor = (sessionType?: string) => {
-    if (sessionType === 'FN') return 'var(--color-info)';
-    if (sessionType === 'AF') return 'var(--color-warning)';
-    return 'var(--color-secondary)';
+    if (sessionType === "FN") return "var(--color-info)";
+    if (sessionType === "AF") return "var(--color-warning)";
+    return "var(--color-secondary)";
   };
 
   const getAttendanceTypeLabel = (att: Attendance) => {
-    if (!att.isCheckedOut) return 'In Progress';
-    if (att.isFullDay) return 'Full Day';
-    if (att.isHalfDay) return 'Half Day';
-    return 'N/A';
+    if (!att.isCheckedOut) return "In Progress";
+    if (att.isFullDay) return "Full Day";
+    if (att.isHalfDay) return "Half Day";
+    return "N/A";
   };
 
   const getAttendanceTypeColor = (att: Attendance) => {
-    if (!att.isCheckedOut) return 'var(--color-warning)';
-    if (att.isFullDay) return 'var(--color-success)';
-    if (att.isHalfDay) return 'var(--color-info)';
-    return 'var(--color-secondary)';
+    if (!att.isCheckedOut) return "var(--color-warning)";
+    if (att.isFullDay) return "var(--color-success)";
+    if (att.isHalfDay) return "var(--color-info)";
+    return "var(--color-secondary)";
   };
 
   return (
@@ -341,37 +346,46 @@ export default function Modal({ user, onClose }: ModalProps): React.JSX.Element 
       <div className="modal-backdrop" onClick={handleBackdropClick}>
         <div className="modal-container">
           <div className="modal-header">
-            <h2 className="modal-title">{user.username} - Attendance Details</h2>
+            <h2 className="modal-title">
+              {user.username} - Attendance Details
+            </h2>
             <button className="close-btn" onClick={onClose}>
               &times;
             </button>
           </div>
           <div className="modal-body">
             <div className="modal-info">
-              <strong>Employee Number:</strong> {user.employeeNumber}<br />
-              <strong>Employee Class:</strong> {user.empClass}<br />
-              <strong>Projects:</strong> {user.projects.map(p => p.projectCode).join(', ')}<br />
+              <strong>Employee Number:</strong> {user.employeeNumber}
+              <br />
+              <strong>Employee Class:</strong> {user.empClass}
+              <br />
+              <strong>Projects:</strong>{" "}
+              {user.projects.map((p) => p.projectCode).join(", ")}
+              <br />
             </div>
-            
+
             {user.monthlyStatistics && (
               <div className="stats-summary card">
                 <h3>Monthly Summary</h3>
                 <div className="stats-row">
                   <div className="stat-item">
-                    <strong>Total Days:</strong> <span>{user.monthlyStatistics.totalDays.toFixed(1)}</span>
+                    <strong>Total Days:</strong>{" "}
+                    <span>{user.monthlyStatistics.totalDays.toFixed(1)}</span>
                   </div>
                   <div className="stat-item">
-                    <strong>Full Days:</strong> <span>{user.monthlyStatistics.fullDays}</span>
+                    <strong>Full Days:</strong>{" "}
+                    <span>{user.monthlyStatistics.fullDays}</span>
                   </div>
                   <div className="stat-item">
-                    <strong>Half Days:</strong> <span>{user.monthlyStatistics.halfDays}</span>
+                    <strong>Half Days:</strong>{" "}
+                    <span>{user.monthlyStatistics.halfDays}</span>
                   </div>
                 </div>
               </div>
             )}
-            
+
             <h3 className="section-title">Attendance Records</h3>
-            
+
             <div className="search-container">
               <input
                 type="date"
@@ -380,51 +394,60 @@ export default function Modal({ user, onClose }: ModalProps): React.JSX.Element 
                 className="date-search-input"
               />
               {searchDate && (
-                <button 
+                <button
                   className="clear-search-btn"
-                  onClick={() => setSearchDate('')}
+                  onClick={() => setSearchDate("")}
                 >
                   Clear
                 </button>
               )}
             </div>
-            
+
             {filteredAttendances.length === 0 ? (
               <p className="no-records-message">
-                No attendance records found {searchDate ? 'for the selected date' : 'for this month'}.
+                No attendance records found{" "}
+                {searchDate ? "for the selected date" : "for this month"}.
               </p>
             ) : (
               <div className="attendance-list">
                 {filteredAttendances.map((att, index: number) => {
                   const checkInDate = new Date(att.checkinTime);
-                  const checkOutDate = att.checkoutTime ? new Date(att.checkoutTime) : null;
-                  
+                  const checkOutDate = att.checkoutTime
+                    ? new Date(att.checkoutTime)
+                    : null;
+
                   return (
                     <div key={index} className="attendance-item card">
                       <div className="attendance-date">
-                        {checkInDate.toLocaleDateString('en-US', { 
-                          weekday: 'long', 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
+                        {checkInDate.toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
                       </div>
                       <div className="attendance-details">
                         <div className="detail-row">
                           <div className="detail-item">
-                            <strong>Session:</strong> 
-                            <span 
+                            <strong>Session:</strong>
+                            <span
                               className="badge"
-                              style={{ backgroundColor: getSessionColor(att.sessionType) }}
+                              style={{
+                                backgroundColor: getSessionColor(
+                                  att.sessionType
+                                ),
+                              }}
                             >
-                              {att.sessionType || 'N/A'}
+                              {att.sessionType || "N/A"}
                             </span>
                           </div>
                           <div className="detail-item">
-                            <strong>Type:</strong> 
-                            <span 
+                            <strong>Type:</strong>
+                            <span
                               className="badge"
-                              style={{ backgroundColor: getAttendanceTypeColor(att) }}
+                              style={{
+                                backgroundColor: getAttendanceTypeColor(att),
+                              }}
                             >
                               {getAttendanceTypeLabel(att)}
                             </span>
@@ -432,49 +455,63 @@ export default function Modal({ user, onClose }: ModalProps): React.JSX.Element 
                         </div>
                         <div className="detail-row">
                           <div className="detail-item">
-                            <strong>Check-in:</strong> <span>{checkInDate.toLocaleTimeString()}</span>
+                            <strong>Check-in:</strong>{" "}
+                            <span>{checkInDate.toLocaleTimeString()}</span>
                           </div>
                           {checkOutDate && (
                             <div className="detail-item">
-                              <strong>Check-out:</strong> <span>{checkOutDate.toLocaleTimeString()}</span>
+                              <strong>Check-out:</strong>{" "}
+                              <span>{checkOutDate.toLocaleTimeString()}</span>
                             </div>
                           )}
                         </div>
                         <div className="detail-row">
                           <div className="detail-item">
-                            <strong>Location:</strong> <span>{att.location?.address || att.takenLocation || 'Not specified'}</span>
+                            <strong>Location:</strong>{" "}
+                            <span>
+                              {att.location?.address ||
+                                att.takenLocation ||
+                                "Not specified"}
+                            </span>
                           </div>
                           <div className="detail-item">
-                            <strong>Status:</strong> 
-                            <span className={`status-badge ${att.isCheckedOut ? 'completed' : 'in-progress'}`}>
-                              {att.isCheckedOut ? 'Completed' : 'In Progress'}
+                            <strong>Status:</strong>
+                            <span
+                              className={`status-badge ${
+                                att.isCheckedOut ? "completed" : "in-progress"
+                              }`}
+                            >
+                              {att.isCheckedOut ? "Completed" : "In Progress"}
                             </span>
                           </div>
                         </div>
                       </div>
+
                       <div className="media-links">
-                        {att.photos?.map((p: Photo, i: number) => (
-                          <a 
-                            key={i}
-                            href={p.url} 
-                            target="_blank" 
+                        {att.photo && (
+                          <a
+                            href={att.photo.url}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="media-link photo-link"
                           >
-                            📷 Photo {i + 1} ({p.type || 'unknown'})
+                            📷 View Photo
                           </a>
-                        ))}
-                        {att.audio?.map((a: Audio, i: number) => (
-                          <a 
-                            key={i}
-                            href={a.url} 
-                            target="_blank" 
+                        )}
+                        {att.audio && (
+                          <a
+                            href={att.audio.url}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="media-link audio-link"
                           >
-                            🎵 Audio ({a.duration ? a.duration + 's' : 'unknown'})
+                            🎵 Audio (
+                            {att.audio.duration
+                              ? att.audio.duration + "s"
+                              : "unknown"}
+                            )
                           </a>
-                        ))}
+                        )}
                       </div>
                     </div>
                   );

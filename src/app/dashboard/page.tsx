@@ -1,20 +1,20 @@
 // src/app/dashboard/page.tsx
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { api } from '../utils/api';
-import StatsCards from '../components/StatsCards';
-import AttendanceTable from '../components/AttendanceTable';
-import Modal from '../components/Modal';
-import type { ApiResponse, User } from '../types';
-import * as XLSX from 'xlsx';
+import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { api } from "../utils/api";
+import StatsCards from "../components/StatsCards";
+import AttendanceTable from "../components/AttendanceTable";
+import Modal from "../components/Modal";
+import type { ApiResponse, User } from "../types";
+import * as XLSX from "xlsx";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [modalData, setModalData] = useState<User | null>(null);
   const [filters, setFilters] = useState({
     month: new Date().getMonth() + 1,
@@ -23,43 +23,48 @@ export default function Dashboard() {
 
   const loadData = useCallback(async () => {
     if (!user) return;
-    
+
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
       const response = await api.get(
         `/pi/users-attendance?month=${filters.month}&year=${filters.year}`
       );
-      
+
       if (response.success) {
         setData(response);
       } else {
-        setError('Failed to load data');
+        setError("Failed to load data");
       }
     } catch (err) {
-      setError('Error connecting to server: ' + (err as Error).message);
+      setError("Error connecting to server: " + (err as Error).message);
     } finally {
       setLoading(false);
     }
   }, [user, filters.month, filters.year]);
 
   const handleDownloadExcel = (user: User) => {
-    const attendanceRows = user.attendances.map(att => ({
+    const attendanceRows = user.attendances.map((att) => ({
       Date: new Date(att.date).toLocaleDateString(),
-      'Check-in Time': att.checkinTime ? new Date(att.checkinTime).toLocaleTimeString() : 'N/A',
-      'Check-out Time': att.checkoutTime ? new Date(att.checkoutTime).toLocaleTimeString() : 'N/A',
-      Session: att.sessionType || 'N/A',
-      Type: att.isFullDay ? 'Full Day' : att.isHalfDay ? 'Half Day' : 'In Progress',
-      Location: att.takenLocation || 'Not specified',
-      Status: att.isCheckedOut ? 'Completed' : 'In Progress',
-      Photos: att.photos.length,
-      Audio: att.audio.length > 0 ? 'Yes' : 'No'
+      "Check-in Time": att.checkinTime
+        ? new Date(att.checkinTime).toLocaleTimeString()
+        : "N/A",
+      "Check-out Time": att.checkoutTime
+        ? new Date(att.checkoutTime).toLocaleTimeString()
+        : "Not Checked Out",
+      Session: att.sessionType || "N/A",
+      Type: att.attendanceType || "In Progress",
+      "Location Type": att.locationType || "CAMPUS",
+      Location: att.takenLocation || "Not specified",
+      Status: att.checkoutTime ? "Completed" : "In Progress",
+      "Has Photo": att.photo ? "Yes" : "No",
+      "Has Audio": att.audio ? "Yes" : "No",
     }));
 
     const ws = XLSX.utils.json_to_sheet(attendanceRows);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
+    XLSX.utils.book_append_sheet(wb, ws, "Attendance");
 
     XLSX.writeFile(
       wb,
@@ -74,25 +79,29 @@ export default function Dashboard() {
   return (
     <div className="dashboard-content">
       <div className="dashboard-filters">
-        <select 
-          value={filters.month} 
-          onChange={(e) => setFilters(prev => ({ ...prev, month: parseInt(e.target.value) }))}
+        <select
+          value={filters.month}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, month: parseInt(e.target.value) }))
+          }
         >
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>
-              {new Date(0, i).toLocaleDateString('en-US', { month: 'long' })}
+              {new Date(0, i).toLocaleDateString("en-US", { month: "long" })}
             </option>
           ))}
         </select>
-        
-        <select 
-          value={filters.year} 
-          onChange={(e) => setFilters(prev => ({ ...prev, year: parseInt(e.target.value) }))}
+
+        <select
+          value={filters.year}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, year: parseInt(e.target.value) }))
+          }
         >
           <option value="2025">2025</option>
           <option value="2024">2024</option>
         </select>
-        
+
         <button onClick={loadData}>Refresh</button>
       </div>
 

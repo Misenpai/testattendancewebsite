@@ -10,15 +10,25 @@ export interface Audio {
   duration?: number;
 }
 
+// Update the Attendance interface
 export interface Attendance {
   date: string;
   checkinTime: string;
-  checkoutTime?: string;
+  checkoutTime?: string;  // This can be null now
   sessionType?: 'FN' | 'AF';
-  isFullDay?: boolean;
-  isHalfDay?: boolean;
-  isCheckedOut?: boolean;
-  takenLocation?: string; // Kept for backward compatibility if needed
+  attendanceType?: 'FULL_DAY' | 'HALF_DAY';  // Can be null if not checked out
+  locationType?: 'CAMPUS' | 'FIELDTRIP';
+  takenLocation?: string;
+  
+  // Single photo/audio instead of arrays
+  photo?: {
+    url: string;
+  } | null;
+  audio?: {
+    url: string;
+    duration?: number;
+  } | null;
+  
   location?: {
     takenLocation?: string;
     latitude?: number | null;
@@ -28,8 +38,11 @@ export interface Attendance {
     postcode?: string | null;
     address?: string | null;
   };
-  photos: Photo[];
-  audio: Audio[];
+  
+  // Computed properties for UI
+  isCheckedOut?: boolean;
+  isFullDay?: boolean;
+  isHalfDay?: boolean;
 }
 
 export interface User {
