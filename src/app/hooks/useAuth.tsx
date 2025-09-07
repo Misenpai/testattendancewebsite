@@ -1,14 +1,15 @@
 // src/app/hooks/useAuth.tsx
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { AuthUser } from '../types';
+import { createContext, useContext, useEffect, useState } from "react";
+import type { AuthUser } from "../types";
 
 interface AuthContextType {
   user: AuthUser | null;
-  login: (username: string, password: string) => Promise<boolean>;
+  // login: (username: string, password: string) => Promise<boolean>; // REMOVE
   logout: () => void;
   isLoading: boolean;
+  setSSOUser: (ssoUser: AuthUser) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,7 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Helper function to set cookie
 function setCookie(name: string, value: string, days: number = 7) {
   const expires = new Date();
-  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
   document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
 }
 
@@ -30,71 +31,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('pi_token');
-    const userData = localStorage.getItem('pi_user');
-    
-    if (token && userData) {
+    // Only check for SSO user
+    const ssoUser = localStorage.getItem("sso_user");
+    if (ssoUser) {
       try {
-        setUser(JSON.parse(userData));
+        setUser(JSON.parse(ssoUser));
       } catch {
-        localStorage.removeItem('pi_token');
-        localStorage.removeItem('pi_user');
-        deleteCookie('pi_token');
+        localStorage.removeItem("sso_user");
       }
     }
     setIsLoading(false);
   }, []);
 
-  const login = async (username: string, password: string): Promise<boolean> => {
-    try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3000/api';
-      
-      const response = await fetch(`${API_BASE}/pi/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+  // Remove the login function entirely
+  // const login = async (...) => { ... }  // DELETE THIS
 
-      console.log('Login HTTP status:', response.status);
-
-      const data = await response.json();
-      console.log('Login response data:', data);
-
-      if (data.success) {
-        const authUser: AuthUser = {
-          username: data.username,
-          projectCode: data.projectCode,
-          projects: data.projects || [data.projectCode],
-          token: data.token,
-        };
-
-        setUser(authUser);
-        localStorage.setItem('pi_token', data.token);
-        localStorage.setItem('pi_user', JSON.stringify(authUser));
-        
-        // IMPORTANT: Set the cookie that middleware expects
-        setCookie('pi_token', data.token);
-        
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
-    }
+  const setSSOUser = (ssoUser: AuthUser) => {
+    setUser(ssoUser);
+    localStorage.setItem("sso_user", JSON.stringify(ssoUser));
+    setCookie("sso_token", ssoUser.token);
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('pi_token');
-    localStorage.removeItem('pi_user');
-    deleteCookie('pi_token');
+    localStorage.removeItem("sso_user");
+    deleteCookie("sso_token");
+    // Optionally redirect to PI Website
+    window.location.href = process.env.NEXT_PUBLIC_PI_WEBSITE_URL || "/";
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, logout, isLoading, setSSOUser }}>
       {children}
     </AuthContext.Provider>
   );
@@ -103,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

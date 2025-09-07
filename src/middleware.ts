@@ -1,25 +1,29 @@
 // middleware.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('pi_token');
-  const isLoginPage = request.nextUrl.pathname === '/login';
-  const isDashboardRoute = request.nextUrl.pathname.startsWith('/dashboard');
+  const ssoToken = request.cookies.get("sso_token");
+  const isSSOPage = request.nextUrl.pathname === "/sso";
+  const isDashboardRoute = request.nextUrl.pathname.startsWith("/dashboard");
 
-  // Redirect to login if trying to access dashboard without token
-  if (isDashboardRoute && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  if (isSSOPage) {
+    return NextResponse.next();
   }
 
-  // Redirect to dashboard if logged in and trying to access login
-  if (isLoginPage && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  // No token = redirect to PI Website
+  if (isDashboardRoute && !ssoToken) {
+    return NextResponse.redirect(
+      new URL(
+        process.env.NEXT_PUBLIC_PI_WEBSITE_URL || "http://localhost:3000",
+        request.url,
+      ),
+    );
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login'],
+  matcher: ["/dashboard/:path*", "/sso"],
 };

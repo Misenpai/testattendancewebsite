@@ -28,9 +28,20 @@ export default function Dashboard() {
     setError("");
 
     try {
-      const response = await api.get(
-        `/pi/users-attendance?month=${filters.month}&year=${filters.year}`
-      );
+      let response;
+
+      if (user.isSSO) {
+        // Use SSO endpoint
+        response = await api.postWithSSO(
+          `/pi/users-attendance-sso?month=${filters.month}&year=${filters.year}`,
+          {},
+        );
+      } else {
+        // Use regular endpoint (if you want to keep it)
+        response = await api.get(
+          `/pi/users-attendance?month=${filters.month}&year=${filters.year}`,
+        );
+      }
 
       if (response.success) {
         setData(response);
@@ -68,7 +79,7 @@ export default function Dashboard() {
 
     XLSX.writeFile(
       wb,
-      `${user.username}_attendance_${filters.month}_${filters.year}.xlsx`
+      `${user.username}_attendance_${filters.month}_${filters.year}.xlsx`,
     );
   };
 

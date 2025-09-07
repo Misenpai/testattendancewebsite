@@ -1,9 +1,9 @@
 // src/app/page.tsx
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from './hooks/useAuth';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "./hooks/useAuth";
 
 export default function HomePage() {
   const { user, isLoading } = useAuth();
@@ -12,16 +12,18 @@ export default function HomePage() {
   useEffect(() => {
     if (!isLoading) {
       if (user) {
-        router.push('/dashboard');
+        router.push("/dashboard");
       } else {
-        router.push('/login');
+        // Redirect to PI Website for login
+        window.location.href =
+          process.env.NEXT_PUBLIC_PI_WEBSITE_URL || "http://localhost:3000";
       }
     }
   }, [user, isLoading, router]);
 
   return (
     <div className="loading-screen">
-      <div className="loading-spinner">Loading...</div>
+      <div className="loading-spinner">Redirecting...</div>
     </div>
   );
 }
