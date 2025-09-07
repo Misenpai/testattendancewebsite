@@ -1,10 +1,12 @@
 // src/app/layout.tsx
-import type { Metadata } from 'next';
-import { AuthProvider } from './hooks/useAuth';
+import type { Metadata } from "next";
+import { AuthProvider } from "./hooks/useAuth";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'PI Dashboard - Attendance Management',
-  description: 'Principal Investigator Dashboard for managing project attendance',
+  title: "PI Dashboard - Attendance Management",
+  description:
+    "Principal Investigator Dashboard for managing project attendance",
 };
 
 export default function RootLayout({
@@ -15,9 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

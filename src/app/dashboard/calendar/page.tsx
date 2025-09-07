@@ -1,11 +1,11 @@
 // src/app/dashboard/calendar/page.tsx (note: corrected spelling from 'calender' to 'calendar')
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { api } from '../../utils/api';
-import Calendar from '../../components/Calendar';
-import type { User } from '../../types';
+import { useState, useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { api } from "../../utils/api";
+import Calendar from "../../components/Calendar";
+import type { User } from "../../types";
 
 export default function CalendarPage() {
   const { user } = useAuth();
@@ -19,18 +19,18 @@ export default function CalendarPage() {
   useEffect(() => {
     const loadUsers = async () => {
       if (!user) return;
-      
+
       setLoading(true);
       try {
         const response = await api.get(
-          `/pi/users-attendance?month=${filters.month}&year=${filters.year}`
+          `/pi/users-attendance?month=${filters.month}&year=${filters.year}`,
         );
-        
+
         if (response.success) {
           setUsers(response.data);
         }
       } catch (error) {
-        console.error('Error loading users:', error);
+        console.error("Error loading users:", error);
       } finally {
         setLoading(false);
       }
@@ -44,20 +44,30 @@ export default function CalendarPage() {
       <div className="page-header">
         <h1>Attendance Calendar</h1>
         <div className="calendar-filters">
-          <select 
-            value={filters.month} 
-            onChange={(e) => setFilters(prev => ({ ...prev, month: parseInt(e.target.value) }))}
+          <select
+            value={filters.month}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                month: parseInt(e.target.value),
+              }))
+            }
           >
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i + 1} value={i + 1}>
-                {new Date(0, i).toLocaleDateString('en-US', { month: 'long' })}
+                {new Date(0, i).toLocaleDateString("en-US", { month: "long" })}
               </option>
             ))}
           </select>
-          
-          <select 
-            value={filters.year} 
-            onChange={(e) => setFilters(prev => ({ ...prev, year: parseInt(e.target.value) }))}
+
+          <select
+            value={filters.year}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                year: parseInt(e.target.value),
+              }))
+            }
           >
             <option value="2025">2025</option>
             <option value="2024">2024</option>
@@ -68,11 +78,7 @@ export default function CalendarPage() {
       {loading ? (
         <div className="loading">Loading calendar...</div>
       ) : (
-        <Calendar 
-          month={filters.month} 
-          year={filters.year} 
-          users={users} 
-        />
+        <Calendar month={filters.month} year={filters.year} users={users} />
       )}
     </div>
   );
