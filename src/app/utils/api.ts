@@ -13,8 +13,14 @@ export class ApiClient {
     if (token) {
       headers.Authorization = `Bearer ${token}`;
     } else if (ssoUser) {
-      // For SSO, send the user data in headers
-      headers["X-SSO-User"] = ssoUser;
+      // For SSO, send the user data in headers with timestamp
+      const userData = JSON.parse(ssoUser);
+      const ssoData = {
+        username: userData.username,
+        projectCodes: userData.projects,
+        timestamp: Date.now() // Add fresh timestamp
+      };
+      headers["X-SSO-User"] = JSON.stringify(ssoData);
     }
 
     return headers;
@@ -45,7 +51,7 @@ export class ApiClient {
     return response.json();
   }
 
-  // Add SSO-specific method
+  // Keep SSO method for specific endpoints
   async postWithSSO(endpoint: string, data: any) {
     const ssoUser = localStorage.getItem("sso_user");
     if (ssoUser) {

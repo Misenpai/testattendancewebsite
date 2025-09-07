@@ -1,4 +1,4 @@
-// src/app/dashboard/calendar/page.tsx (note: corrected spelling from 'calender' to 'calendar')
+// src/app/dashboard/calendar/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -22,12 +22,15 @@ export default function CalendarPage() {
 
       setLoading(true);
       try {
+        // Use the new GET endpoint that supports flexible auth
         const response = await api.get(
           `/pi/users-attendance?month=${filters.month}&year=${filters.year}`,
         );
 
         if (response.success) {
           setUsers(response.data);
+        } else {
+          console.error("Failed to load users:", response.error);
         }
       } catch (error) {
         console.error("Error loading users:", error);
