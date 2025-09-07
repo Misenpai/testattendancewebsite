@@ -1,4 +1,3 @@
-// src/app/hooks/useAuth.tsx
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
@@ -6,7 +5,6 @@ import type { AuthUser } from "../types";
 
 interface AuthContextType {
   user: AuthUser | null;
-  // login: (username: string, password: string) => Promise<boolean>; // REMOVE
   logout: () => void;
   isLoading: boolean;
   setSSOUser: (ssoUser: AuthUser) => void;
@@ -14,14 +12,12 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Helper function to set cookie
 function setCookie(name: string, value: string, days: number = 7) {
   const expires = new Date();
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
   document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
 }
 
-// Helper function to delete cookie
 function deleteCookie(name: string) {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
 }
@@ -31,32 +27,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Only check for SSO user
+    console.log("AuthProvider: Checking for stored user...");
+
     const ssoUser = localStorage.getItem("sso_user");
     if (ssoUser) {
       try {
-        setUser(JSON.parse(ssoUser));
-      } catch {
+        const userData = JSON.parse(ssoUser);
+        console.log("AuthProvider: Found SSO user:", userData);
+        setUser(userData);
+      } catch (error) {
+        console.error("AuthProvider: Error parsing SSO user:", error);
         localStorage.removeItem("sso_user");
       }
+    } else {
+      console.log("AuthProvider: No SSO user found");
     }
+
     setIsLoading(false);
   }, []);
 
-  // Remove the login function entirely
-  // const login = async (...) => { ... }  // DELETE THIS
-
   const setSSOUser = (ssoUser: AuthUser) => {
+    console.log("AuthProvider: Setting SSO user:", ssoUser);
     setUser(ssoUser);
     localStorage.setItem("sso_user", JSON.stringify(ssoUser));
     setCookie("sso_token", ssoUser.token);
   };
 
   const logout = () => {
+    console.log("AuthProvider: Logging out");
     setUser(null);
     localStorage.removeItem("sso_user");
     deleteCookie("sso_token");
-    // Optionally redirect to PI Website
     window.location.href = process.env.NEXT_PUBLIC_PI_WEBSITE_URL || "/";
   };
 

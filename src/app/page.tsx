@@ -15,8 +15,7 @@ export default function HomePage() {
         router.push("/dashboard");
       } else {
         // Redirect to PI Website for login
-        window.location.href =
-          process.env.NEXT_PUBLIC_PI_WEBSITE_URL || "http://localhost:3000";
+        window.location.href = process.env.NEXT_PUBLIC_PI_WEBSITE_URL!;
       }
     }
   }, [user, isLoading, router]);

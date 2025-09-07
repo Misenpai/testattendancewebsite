@@ -14,12 +14,12 @@ export interface Audio {
 export interface Attendance {
   date: string;
   checkinTime: string;
-  checkoutTime?: string;  // This can be null now
-  sessionType?: 'FN' | 'AF';
-  attendanceType?: 'FULL_DAY' | 'HALF_DAY';  // Can be null if not checked out
-  locationType?: 'CAMPUS' | 'FIELDTRIP';
+  checkoutTime?: string; // This can be null now
+  sessionType?: "FN" | "AF";
+  attendanceType?: "FULL_DAY" | "HALF_DAY"; // Can be null if not checked out
+  locationType?: "CAMPUS" | "FIELDTRIP";
   takenLocation?: string;
-  
+
   // Single photo/audio instead of arrays
   photo?: {
     url: string;
@@ -28,7 +28,7 @@ export interface Attendance {
     url: string;
     duration?: number;
   } | null;
-  
+
   location?: {
     takenLocation?: string;
     latitude?: number | null;
@@ -38,7 +38,7 @@ export interface Attendance {
     postcode?: string | null;
     address?: string | null;
   };
-  
+
   // Computed properties for UI
   isCheckedOut?: boolean;
   isFullDay?: boolean;
@@ -93,7 +93,7 @@ export interface CalendarDay {
   attendances: {
     [employeeNumber: string]: {
       present: boolean;
-      type: 'FULL_DAY' | 'HALF_DAY' | 'IN_PROGRESS';
+      type: "FULL_DAY" | "HALF_DAY" | "IN_PROGRESS";
       username: string;
     };
   };
@@ -104,4 +104,5 @@ export interface AuthUser {
   projectCode: string;
   projects: string[];
   token: string;
+  isSSO?: boolean; // Add this
 }

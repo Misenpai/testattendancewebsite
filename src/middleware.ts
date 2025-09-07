@@ -14,10 +14,7 @@ export function middleware(request: NextRequest) {
   // No token = redirect to PI Website
   if (isDashboardRoute && !ssoToken) {
     return NextResponse.redirect(
-      new URL(
-        process.env.NEXT_PUBLIC_PI_WEBSITE_URL || "http://localhost:3000",
-        request.url,
-      ),
+      new URL(process.env.NEXT_PUBLIC_PI_WEBSITE_URL!, request.url),
     );
   }
 
