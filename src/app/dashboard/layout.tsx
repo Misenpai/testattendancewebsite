@@ -1,10 +1,10 @@
+// src/app/dashboard/layout.tsx
 "use client";
 
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+import Header from "../../components/Header";
 
 export default function DashboardLayout({
   children,
@@ -50,8 +50,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
+    <div className="dashboard-layout" style={{ backgroundColor: '#fdfbfc' }}>
       <div className="main-content">
         <Header />
         {children}

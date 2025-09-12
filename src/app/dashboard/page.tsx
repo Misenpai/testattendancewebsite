@@ -1,13 +1,12 @@
-// src/app/dashboard/page.tsx
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../hooks/useAuth";
-import { api } from "../utils/api";
-import StatsCards from "../components/StatsCards";
-import AttendanceTable from "../components/AttendanceTable";
-import Modal from "../components/Modal";
-import type { ApiResponse, User } from "../types";
+import { useAuth } from "../../hooks/useAuth";
+import { api } from "../../utils/api";
+import AttendanceTable from "../../components/AttendanceTable";
+import Calendar from "../../components/Calendar";
+import Modal from "../../components/Modal";
+import type { ApiResponse, User, Attendance } from "../../types";
 import * as XLSX from "xlsx";
 
 export default function Dashboard() {
@@ -20,6 +19,17 @@ export default function Dashboard() {
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
   });
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [dateAttendances, setDateAttendances] = useState<Attendance[]>([]);
+
+  // Polling for data updates
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      if (user) loadData();
+    }, 30000); // Poll every 30 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [user, filters]);
 
   const loadData = useCallback(async () => {
     if (!user) return;
@@ -31,13 +41,11 @@ export default function Dashboard() {
       let response;
 
       if (user.isSSO) {
-        // Use SSO endpoint
         response = await api.postWithSSO(
           `/pi/users-attendance-sso?month=${filters.month}&year=${filters.year}`,
           {},
         );
       } else {
-        // Use regular endpoint (if you want to keep it)
         response = await api.get(
           `/pi/users-attendance?month=${filters.month}&year=${filters.year}`,
         );
@@ -83,18 +91,24 @@ export default function Dashboard() {
     );
   };
 
+  const handleDateSelect = (date: string, attendances: Attendance[]) => {
+    setSelectedDate(date);
+    setDateAttendances(attendances);
+  };
+
   useEffect(() => {
     loadData();
   }, [loadData]);
 
   return (
-    <div className="dashboard-content">
-      <div className="dashboard-filters">
+    <div className="dashboard-content" style={{ padding: '2rem', backgroundColor: '#fdfbfc' }}>
+      <div className="dashboard-filters" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'center' }}>
         <select
           value={filters.month}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, month: parseInt(e.target.value) }))
           }
+          style={{ padding: '0.5rem 1rem', border: '2px solid black', borderRadius: '0', background: 'white' }}
         >
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>
@@ -108,15 +122,35 @@ export default function Dashboard() {
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, year: parseInt(e.target.value) }))
           }
+          style={{ padding: '0.5rem 1rem', border: '2px solid black', borderRadius: '0', background: 'white' }}
         >
           <option value="2025">2025</option>
           <option value="2024">2024</option>
         </select>
 
-        <button onClick={loadData}>Refresh</button>
+        <button 
+          onClick={loadData} 
+          style={{ 
+            padding: '0.5rem 1rem', 
+            background: 'black', 
+            color: 'white', 
+            border: '2px solid black', 
+            borderRadius: '0', 
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          Refresh
+        </button>
       </div>
 
-      <StatsCards data={data} />
+      {/* Integrated Calendar */}
+      <Calendar 
+        month={filters.month} 
+        year={filters.year} 
+        users={data?.data || []} 
+        onDateClick={handleDateSelect}
+      />
 
       <AttendanceTable
         data={data}
@@ -124,6 +158,8 @@ export default function Dashboard() {
         error={error}
         onViewDetails={(user) => setModalData(user)}
         onDownloadExcel={handleDownloadExcel}
+        selectedDate={selectedDate}
+        dateAttendances={dateAttendances}
       />
 
       {modalData && (

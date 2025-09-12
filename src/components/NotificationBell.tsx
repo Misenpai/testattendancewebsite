@@ -15,13 +15,13 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   bellIcon: {
     fontSize: '1.5rem',
-    color: '#A0AEC0',
+    color: '#000',
   },
   badge: {
     position: 'absolute',
     top: '-5px',
     right: '-10px',
-    background: '#E53E3E',
+    background: '#000',
     color: 'white',
     borderRadius: '50%',
     width: '20px',
@@ -38,35 +38,39 @@ const styles: { [key: string]: React.CSSProperties } = {
     right: '0',
     width: '300px',
     background: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    border: '2px solid black',
+    borderRadius: '0',
+    boxShadow: '4px 4px 0px rgba(0,0,0,1)',
     zIndex: 1000,
-    border: '1px solid #E2E8F0',
   },
   dropdownHeader: {
     padding: '1rem',
-    fontWeight: 600,
-    borderBottom: '1px solid #E2E8F0',
+    fontWeight: 'bold',
+    borderBottom: '2px solid black',
+    color: 'black'
   },
   notificationItem: {
     padding: '1rem',
-    borderBottom: '1px solid #E2E8F0',
+    borderBottom: '1px solid #e2e8f0',
   },
   notificationText: {
     marginBottom: '0.75rem',
+    color: 'black'
   },
   sendButton: {
     padding: '0.4rem 0.8rem',
-    background: '#48BB78',
+    background: 'black',
     color: 'white',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '0',
     cursor: 'pointer',
+    fontWeight: 'bold',
+    border: '2px solid black'
   },
   noNotifications: {
     padding: '1.5rem',
     textAlign: 'center',
-    color: '#718096',
+    color: '#666',
   }
 };
 
@@ -74,18 +78,18 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await api.get('/pi/notifications');
-        if (res.success) {
-          setNotifications(res.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch notifications:", error);
+  const fetchNotifications = async () => {
+    try {
+      const res = await api.get('/pi/notifications');
+      if (res.success) {
+        setNotifications(res.data);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 10000); // Poll every 10 seconds
 
