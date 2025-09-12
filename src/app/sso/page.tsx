@@ -1,8 +1,9 @@
+// src/app/sso/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import Link from "next/link";
 
 export default function SSOPage() {
@@ -73,7 +74,7 @@ export default function SSOPage() {
       );
       setDebug({ error: err, token });
     }
-  }, [searchParams, setSSOUser]); // Removed router from dependencies
+  }, [searchParams, setSSOUser]);
 
   if (error) {
     return (

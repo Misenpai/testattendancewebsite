@@ -140,7 +140,7 @@ export default function Calendar({ month, year, users, onDateClick }: CalendarPr
   return (
     <div className="calendar">
       <div className="calendar-header">
-        <h2>
+        <h2 className="bg-black">
           {new Date(year, month - 1).toLocaleDateString("en-US", {
             month: "long",
             year: "numeric",
