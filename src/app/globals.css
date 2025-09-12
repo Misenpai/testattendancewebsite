@@ -1064,3 +1064,9 @@ th {
    display: none !important;
  }
 }
+
+.calendar-day.empty {
+  background: transparent !important;
+  border: 1px solid #e2e8f0;
+  /* Keep the border to maintain grid structure */
+}

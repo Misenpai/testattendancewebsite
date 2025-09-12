@@ -10,7 +10,6 @@ interface AttendanceTableProps {
   loading: boolean;
   error: string;
   onViewDetails: (user: User) => void;
-  onDownloadExcel: (user: User) => void;
 }
 
 export default function AttendanceTable({
@@ -18,7 +17,6 @@ export default function AttendanceTable({
   loading,
   error,
   onViewDetails,
-  onDownloadExcel,
 }: AttendanceTableProps) {
   const [fieldTripModalUser, setFieldTripModalUser] = useState<User | null>(
     null
@@ -153,12 +151,6 @@ export default function AttendanceTable({
                       onClick={() => onViewDetails(user)}
                     >
                       View
-                    </button>
-                    <button
-                      className="download-btn"
-                      onClick={() => onDownloadExcel(user)}
-                    >
-                      Download
                     </button>
                   </div>
                 </td>

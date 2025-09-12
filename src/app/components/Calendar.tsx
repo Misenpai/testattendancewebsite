@@ -26,35 +26,54 @@ export default function Calendar({ month, year, users }: CalendarProps) {
 
       // Load holidays
       const holidaysRes = await api.get(`/calendar/holidays?year=${year}`);
-      if (holidaysRes.success) {
-        setHolidays(holidaysRes.holidays);
-      }
+      const currentYearHolidays = holidaysRes.success
+        ? holidaysRes.holidays
+        : [];
+      setHolidays(currentYearHolidays);
 
-      // Generate calendar days
-      const daysInMonth = new Date(year, month, 0).getDate();
+      // Generate calendar days - ONLY for the current month
+      const daysInMonth = new Date(year, month, 0).getDate(); // This gets days in the specified month
       const calendarDays: CalendarDay[] = [];
 
+      // Start from day 1 and go to the last day of the month
       for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month - 1, day);
+        const date = new Date(year, month - 1, day); // month - 1 because JS months are 0-indexed
+        
+        // Set the time to noon to avoid timezone issues
+        date.setHours(12, 0, 0, 0);
+        
         const dateStr = date.toISOString().split("T")[0];
 
-        const isHoliday = holidays.some(
-          (h) => new Date(h.date).toDateString() === date.toDateString()
-        );
+        // Make sure we're only processing dates for the correct month
+        if (date.getMonth() !== month - 1) {
+          continue; // Skip if somehow we get a different month
+        }
 
+        // Find holiday by comparing date strings (YYYY-MM-DD format)
+        const holidayInfo = currentYearHolidays.find((h: any) => {
+          const holidayDate = new Date(h.date);
+          // Compare using local date strings to avoid timezone issues
+          return holidayDate.getUTCFullYear() === date.getFullYear() &&
+                 holidayDate.getUTCMonth() === date.getMonth() &&
+                 holidayDate.getUTCDate() === date.getDate();
+        });
+        
+        const isHoliday = !!holidayInfo;
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
+        // Process attendances
         const attendances: { [key: string]: any } = {};
 
-        // In the loadCalendarData function, update the attendance logic:
         users.forEach((user) => {
           const dayAttendance = user.attendances.find((att) => {
-            const attDate = new Date(att.date).toDateString();
-            return attDate === date.toDateString();
+            const attDate = new Date(att.date);
+            // Compare dates properly
+            return attDate.getFullYear() === date.getFullYear() &&
+                   attDate.getMonth() === date.getMonth() &&
+                   attDate.getDate() === date.getDate();
           });
 
           if (dayAttendance) {
-            // Record exists = present
             attendances[user.employeeNumber] = {
               present: true,
               type:
@@ -62,11 +81,10 @@ export default function Calendar({ month, year, users }: CalendarProps) {
                   ? "FULL_DAY"
                   : dayAttendance.attendanceType === "HALF_DAY"
                   ? "HALF_DAY"
-                  : "IN_PROGRESS", // No checkoutTime means in progress
+                  : "IN_PROGRESS",
               username: user.username,
             };
           } else if (!isHoliday && !isWeekend) {
-            // No record on working day = absent
             attendances[user.employeeNumber] = {
               present: false,
               type: "ABSENT",
@@ -79,9 +97,7 @@ export default function Calendar({ month, year, users }: CalendarProps) {
           date: dateStr,
           isHoliday,
           isWeekend,
-          description: holidays.find(
-            (h) => new Date(h.date).toDateString() === date.toDateString()
-          )?.description,
+          description: holidayInfo?.description,
           attendances,
         });
       }
@@ -120,6 +136,9 @@ export default function Calendar({ month, year, users }: CalendarProps) {
     return <div className="calendar-loading">Loading calendar...</div>;
   }
 
+  // Get the first day of the month to determine starting position
+  const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
+
   return (
     <div className="calendar">
       <div className="calendar-header">
@@ -151,7 +170,17 @@ export default function Calendar({ month, year, users }: CalendarProps) {
         </div>
 
         <div className="calendar-days">
-          {calendarData.map((day, index) => {
+          {/* Add empty cells for days before month starts */}
+          {Array.from(
+            { length: firstDayOfMonth },
+            (_, i) => (
+              <div key={`empty-${i}`} className="calendar-day empty">
+                {/* Empty cell - no content */}
+              </div>
+            )
+          )}
+
+          {calendarData.map((day) => {
             const date = new Date(day.date);
             const dayOfMonth = date.getDate();
             const presentCount = Object.values(day.attendances).filter(
@@ -160,18 +189,18 @@ export default function Calendar({ month, year, users }: CalendarProps) {
             const totalCount = Object.values(day.attendances).length;
 
             return (
-              <div key={index} className={getDayClass(day)}>
+              <div key={day.date} className={getDayClass(day)}>
                 <div className="day-number">{dayOfMonth}</div>
                 {day.description && (
                   <div className="day-holiday">{day.description}</div>
                 )}
-                <div className="day-attendance">
-                  {totalCount > 0 && (
+                {totalCount > 0 && (
+                  <div className="day-attendance">
                     <span>
                       {presentCount}/{totalCount}
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             );
           })}
