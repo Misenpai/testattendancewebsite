@@ -10,17 +10,16 @@ export interface Audio {
   duration?: number;
 }
 
-// Update the Attendance interface
+// src/app/types/index.ts - Updated Attendance type
 export interface Attendance {
   date: string;
   checkinTime: string;
-  checkoutTime?: string; // This can be null now
+  checkoutTime?: string;
   sessionType?: "FN" | "AF";
-  attendanceType?: "FULL_DAY" | "HALF_DAY"; // Can be null if not checked out
+  attendanceType?: "FULL_DAY" | "HALF_DAY";
   locationType?: "CAMPUS" | "FIELDTRIP";
   takenLocation?: string;
 
-  // Single photo/audio instead of arrays
   photo?: {
     url: string;
   } | null;
@@ -43,6 +42,9 @@ export interface Attendance {
   isCheckedOut?: boolean;
   isFullDay?: boolean;
   isHalfDay?: boolean;
+
+  // Added optional username for extended use
+  username?: string;
 }
 
 export interface User {

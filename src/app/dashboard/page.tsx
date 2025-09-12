@@ -1,3 +1,4 @@
+// src/app/dashboard/page.tsx - Fixed version
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -6,7 +7,7 @@ import { api } from "../../utils/api";
 import AttendanceTable from "../../components/AttendanceTable";
 import Calendar from "../../components/Calendar";
 import Modal from "../../components/Modal";
-import type { ApiResponse, User, Attendance } from "../../types";
+import type { ApiResponse, User } from "../../types";
 import * as XLSX from "xlsx";
 
 export default function Dashboard() {
@@ -19,17 +20,8 @@ export default function Dashboard() {
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
   });
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [dateAttendances, setDateAttendances] = useState<Attendance[]>([]);
-
-  // Polling for data updates
-  useEffect(() => {
-    const pollInterval = setInterval(() => {
-      if (user) loadData();
-    }, 30000); // Poll every 30 seconds
-
-    return () => clearInterval(pollInterval);
-  }, [user, filters]);
+  const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined); // Changed to undefined
+  const [dateAttendances, setDateAttendances] = useState<any[]>([]);
 
   const loadData = useCallback(async () => {
     if (!user) return;
@@ -61,7 +53,16 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  }, [user, filters.month, filters.year]);
+  }, [user, filters.month, filters.year]); // Added dependencies
+
+  // Polling for updates
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      if (user) loadData();
+    }, 30000); // Poll every 30 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [user, loadData]); // Added loadData to deps
 
   const handleDownloadExcel = (user: User) => {
     const attendanceRows = user.attendances.map((att) => ({
@@ -91,24 +92,23 @@ export default function Dashboard() {
     );
   };
 
-  const handleDateSelect = (date: string, attendances: Attendance[]) => {
+  const handleDateSelect = (date: string, attendances: any[]) => {
     setSelectedDate(date);
     setDateAttendances(attendances);
   };
 
   useEffect(() => {
     loadData();
-  }, [loadData]);
+  }, [loadData]); // Use loadData from useCallback
 
   return (
-    <div className="dashboard-content" style={{ padding: '2rem', backgroundColor: '#fdfbfc' }}>
-      <div className="dashboard-filters" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'center' }}>
+    <div className="dashboard-content">
+      <div className="dashboard-filters">
         <select
           value={filters.month}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, month: parseInt(e.target.value) }))
           }
-          style={{ padding: '0.5rem 1rem', border: '2px solid black', borderRadius: '0', background: 'white' }}
         >
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>
@@ -122,29 +122,14 @@ export default function Dashboard() {
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, year: parseInt(e.target.value) }))
           }
-          style={{ padding: '0.5rem 1rem', border: '2px solid black', borderRadius: '0', background: 'white' }}
         >
           <option value="2025">2025</option>
           <option value="2024">2024</option>
         </select>
 
-        <button 
-          onClick={loadData} 
-          style={{ 
-            padding: '0.5rem 1rem', 
-            background: 'black', 
-            color: 'white', 
-            border: '2px solid black', 
-            borderRadius: '0', 
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
-        >
-          Refresh
-        </button>
+        <button onClick={loadData}>Refresh</button>
       </div>
 
-      {/* Integrated Calendar */}
       <Calendar 
         month={filters.month} 
         year={filters.year} 
@@ -157,8 +142,7 @@ export default function Dashboard() {
         loading={loading}
         error={error}
         onViewDetails={(user) => setModalData(user)}
-        onDownloadExcel={handleDownloadExcel}
-        selectedDate={selectedDate}
+        selectedDate={selectedDate} // Now undefined compatible
         dateAttendances={dateAttendances}
       />
 

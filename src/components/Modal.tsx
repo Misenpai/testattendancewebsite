@@ -321,9 +321,9 @@ export default function Modal({
   };
 
   const getSessionColor = (sessionType?: string) => {
-    if (sessionType === "FN") return "var(--color-info)";
-    if (sessionType === "AF") return "var(--color-warning)";
-    return "var(--color-secondary)";
+    if (sessionType === "FN") return "#17a2b8";
+    if (sessionType === "AF") return "#ffc107";
+    return "#6c757d";
   };
 
   const getAttendanceTypeLabel = (att: Attendance) => {
@@ -334,10 +334,10 @@ export default function Modal({
   };
 
   const getAttendanceTypeColor = (att: Attendance) => {
-    if (!att.isCheckedOut) return "var(--color-warning)";
-    if (att.isFullDay) return "var(--color-success)";
-    if (att.isHalfDay) return "var(--color-info)";
-    return "var(--color-secondary)";
+    if (!att.isCheckedOut) return "#ffc107";
+    if (att.isFullDay) return "#28a745";
+    if (att.isHalfDay) return "#17a2b8";
+    return "#6c757d";
   };
 
   return (
@@ -387,7 +387,9 @@ export default function Modal({
             <h3 className="section-title">Attendance Records</h3>
 
             <div className="search-container">
+              <label htmlFor="dateSearch">Filter by Date:</label> {/* Added label */}
               <input
+                id="dateSearch"
                 type="date"
                 value={searchDate}
                 onChange={(e) => setSearchDate(e.target.value)}

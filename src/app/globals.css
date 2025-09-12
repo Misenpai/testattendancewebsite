@@ -144,3 +144,137 @@ th {
     @apply min-h-[80px];
   }
 }
+
+/* Add to src/app/globals.css - Neo-Brutalism classes to replace inline styles */
+
+/* Stat badges */
+.stat-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 2px solid black;
+  display: inline-block;
+}
+
+.stat-badge.full-days {
+  background: #d4edda;
+  color: #155724;
+}
+
+.stat-badge.half-days {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.stat-badge.not-checked {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.stat-badge.total-days {
+  background: #f8f9fa;
+  color: #495057;
+}
+
+/* Manage button */
+.manage-trips-btn {
+  background: white;
+  color: black;
+  border: 2px solid black;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 0.8rem;
+  box-shadow: 2px 2px 0px rgba(0,0,0,1);
+  font-weight: bold;
+}
+
+.manage-trips-btn:hover {
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+}
+
+/* View button */
+.view-btn {
+  background: black;
+  color: white;
+  border: 2px solid black;
+  padding: 0.5rem 1rem;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.view-btn:hover {
+  background: #333;
+}
+
+/* Date attendance details */
+.date-attendance-details {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 0;
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+}
+
+.date-attendance-details h3 {
+  color: black;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid black;
+  padding-bottom: 0.5rem;
+}
+
+.date-attendance-details ul {
+  list-style: none;
+  padding: 0;
+}
+
+.date-attendance-details li {
+  padding: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: black;
+}
+
+/* Remove inline styles from table elements - use classes */
+.user-row td {
+  padding: 1rem;
+  color: black;
+}
+
+.project-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.project-tag {
+  background: #e2e8f0;
+  color: black;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid black;
+}
+
+.monthly-stats {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.field-trip-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Calendar click handler integration - no changes needed here */

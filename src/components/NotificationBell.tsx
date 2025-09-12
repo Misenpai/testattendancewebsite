@@ -61,7 +61,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '0.4rem 0.8rem',
     background: 'black',
     color: 'white',
-    border: 'none',
     borderRadius: '0',
     cursor: 'pointer',
     fontWeight: 'bold',

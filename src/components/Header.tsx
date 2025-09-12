@@ -41,7 +41,6 @@ export default function Header() {
               padding: '0.5rem 1rem',
               background: 'black',
               color: 'white',
-              border: 'none',
               borderRadius: '0',
               cursor: 'pointer',
               fontWeight: 'bold',
