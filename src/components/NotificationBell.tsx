@@ -8,71 +8,6 @@ interface Notification {
   year: string;
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
-  bellContainer: {
-    position: 'relative',
-    cursor: 'pointer',
-  },
-  bellIcon: {
-    fontSize: '1.5rem',
-    color: '#000',
-  },
-  badge: {
-    position: 'absolute',
-    top: '-5px',
-    right: '-10px',
-    background: '#000',
-    color: 'white',
-    borderRadius: '50%',
-    width: '20px',
-    height: '20px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: '0.75rem',
-    fontWeight: 'bold',
-  },
-  dropdown: {
-    position: 'absolute',
-    top: '40px',
-    right: '0',
-    width: '300px',
-    background: 'white',
-    border: '2px solid black',
-    borderRadius: '0',
-    boxShadow: '4px 4px 0px rgba(0,0,0,1)',
-    zIndex: 1000,
-  },
-  dropdownHeader: {
-    padding: '1rem',
-    fontWeight: 'bold',
-    borderBottom: '2px solid black',
-    color: 'black'
-  },
-  notificationItem: {
-    padding: '1rem',
-    borderBottom: '1px solid #e2e8f0',
-  },
-  notificationText: {
-    marginBottom: '0.75rem',
-    color: 'black'
-  },
-  sendButton: {
-    padding: '0.4rem 0.8rem',
-    background: 'black',
-    color: 'white',
-    borderRadius: '0',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    border: '2px solid black'
-  },
-  noNotifications: {
-    padding: '1.5rem',
-    textAlign: 'center',
-    color: '#666',
-  }
-};
-
 export default function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -110,23 +45,27 @@ export default function NotificationBell() {
   };
 
   return (
-    <div style={styles.bellContainer}>
-      <span style={styles.bellIcon} onClick={() => setIsOpen(!isOpen)}>
+    <div className="relative cursor-pointer">
+      <span className="text-2xl text-black" onClick={() => setIsOpen(!isOpen)}>
         🔔
       </span>
-      {notifications.length > 0 && <span style={styles.badge}>{notifications.length}</span>}
+      {notifications.length > 0 && (
+        <span className="absolute -top-1 -right-2.5 bg-black text-white rounded-full w-5 h-5 flex justify-center items-center text-xs font-bold">
+          {notifications.length}
+        </span>
+      )}
       
       {isOpen && (
-        <div style={styles.dropdown}>
-          <div style={styles.dropdownHeader}>HR Data Requests</div>
+        <div className="absolute top-10 right-0 w-72 bg-white border-2 border-black rounded-none shadow-brutal z-[1000]">
+          <div className="p-4 font-bold border-b-2 border-black text-black">HR Data Requests</div>
           {notifications.length > 0 ? (
             notifications.map((notif, index) => (
-              <div key={index} style={styles.notificationItem}>
-                <p style={styles.notificationText}>
+              <div key={index} className="p-4 border-b border-gray-200">
+                <p className="mb-3 text-black">
                   Request for attendance data for: <strong>{new Date(0, parseInt(notif.month) - 1).toLocaleString('en-US', { month: 'long' })} {notif.year}</strong>
                 </p>
                 <button 
-                  style={styles.sendButton} 
+                  className="py-1.5 px-3 bg-black text-white rounded-none cursor-pointer font-bold border-2 border-black"
                   onClick={() => handleSendData(notif.month, notif.year)}
                 >
                   Send Data to HR
@@ -134,7 +73,7 @@ export default function NotificationBell() {
               </div>
             ))
           ) : (
-            <div style={styles.noNotifications}>No new requests</div>
+            <div className="p-6 text-center text-gray-500">No new requests</div>
           )}
         </div>
       )}

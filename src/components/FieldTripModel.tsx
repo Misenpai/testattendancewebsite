@@ -1,4 +1,4 @@
-// src/app/components/FieldTripModel.tsx - Fixed with labels
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -106,7 +106,7 @@ export default function FieldTripModal({
 
   return (
     <div
-      className="modal active"
+      className="modal"
       onClick={(e) => {
         if ((e.target as HTMLElement).classList.contains('modal')) onClose();
       }}
@@ -114,13 +114,13 @@ export default function FieldTripModal({
       <div className="modal-content">
         <div className="modal-header">
           <h2>Manage Field Trips - {user.username}</h2>
-          <button className="close-btn" onClick={onClose}>
+          <button className="text-2xl" onClick={onClose}>
             ×
           </button>
         </div>
 
-        <div className="modal-body">
-          <div className="field-trip-info">
+        <div className="p-6 space-y-6">
+          <div className="p-4 bg-gray-50 border border-black">
             <p><strong>Employee Number:</strong> {user.employeeNumber}</p>
             <p><strong>Projects:</strong> {user.projects.map(p => p.projectCode).join(', ')}</p>
           </div>
@@ -129,25 +129,27 @@ export default function FieldTripModal({
             <p>Loading field trips…</p>
           ) : (
             <>
-              <div className="field-trip-form">
-                <h3>Schedule New Field Trip</h3>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="startDate">Start Date</label> {/* Added label */}
+              <div className="p-4 border border-black space-y-4">
+                <h3 className="text-lg font-bold">Schedule New Field Trip</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col">
+                    <label htmlFor="startDate" className="mb-1 font-semibold">Start Date</label>
                     <input
                       id="startDate"
                       type="date"
+                      className="p-2 border border-black"
                       value={newTrip.startDate}
                       onChange={(e) =>
                         setNewTrip({ ...newTrip, startDate: e.target.value })
                       }
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="endDate">End Date</label> {/* Added label */}
+                  <div className="flex flex-col">
+                    <label htmlFor="endDate" className="mb-1 font-semibold">End Date</label>
                     <input
                       id="endDate"
                       type="date"
+                      className="p-2 border border-black"
                       value={newTrip.endDate}
                       min={newTrip.startDate}
                       onChange={(e) =>
@@ -156,11 +158,12 @@ export default function FieldTripModal({
                     />
                   </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="description">Description (Optional)</label> {/* Added label */}
+                <div className="flex flex-col">
+                  <label htmlFor="description" className="mb-1 font-semibold">Description (Optional)</label>
                   <input
                     id="description"
                     type="text"
+                    className="p-2 border border-black"
                     value={newTrip.description}
                     onChange={(e) =>
                       setNewTrip({ ...newTrip, description: e.target.value })
@@ -168,51 +171,53 @@ export default function FieldTripModal({
                     placeholder="e.g., Client visit, Training"
                   />
                 </div>
-                <button className="add-trip-btn" onClick={handleAddTrip}>
+                <button className="btn" onClick={handleAddTrip}>
                   Schedule Field Trip
                 </button>
               </div>
 
-              <div className="field-trips-list">
-                <h3>Scheduled Field Trips</h3>
+              <div className="space-y-3">
+                <h3 className="text-lg font-bold">Scheduled Field Trips</h3>
                 {fieldTrips.length === 0 ? (
-                  <p className="no-trips">No field trips scheduled</p>
+                  <p className="p-4 bg-gray-50 border border-black">No field trips scheduled</p>
                 ) : (
-                  fieldTrips.map((trip, index) => (
-                    <div
-                      key={index}
-                      className={`trip-item ${isCurrentlyOnTrip(trip) ? 'active-trip' : ''}`}
-                    >
-                      <div className="trip-info">
-                        <span className="trip-dates">
-                          {new Date(trip.startDate).toLocaleDateString()} -{' '}
-                          {new Date(trip.endDate).toLocaleDateString()}
-                        </span>
-                        {trip.description && (
-                          <span className="trip-description">
-                            {trip.description}
-                          </span>
-                        )}
-                        {isCurrentlyOnTrip(trip) && (
-                          <span className="current-trip-badge">ACTIVE NOW</span>
-                        )}
-                      </div>
-                      <button
-                        className="remove-trip-btn"
-                        onClick={() => handleRemoveTrip(index)}
+                  <div className="space-y-2">
+                    {fieldTrips.map((trip, index) => (
+                      <div
+                        key={index}
+                        className={`flex justify-between items-center p-3 border border-black ${isCurrentlyOnTrip(trip) ? 'bg-blue-100' : 'bg-white'}`}
                       >
-                        Remove
-                      </button>
-                    </div>
-                  ))
+                        <div className="flex-grow">
+                          <span className="font-mono">
+                            {new Date(trip.startDate).toLocaleDateString()} -{' '}
+                            {new Date(trip.endDate).toLocaleDateString()}
+                          </span>
+                          {trip.description && (
+                            <span className="ml-4 text-gray-600 italic">
+                              {trip.description}
+                            </span>
+                          )}
+                          {isCurrentlyOnTrip(trip) && (
+                            <span className="ml-4 px-2 py-1 text-xs font-bold text-white bg-blue-600">ACTIVE NOW</span>
+                          )}
+                        </div>
+                        <button
+                          className="px-3 py-1 bg-red-500 text-white font-bold border border-black hover:bg-red-600"
+                          onClick={() => handleRemoveTrip(index)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
 
-              <div className="modal-actions">
-                <button className="cancel-btn" onClick={onClose}>
+              <div className="flex justify-end items-center gap-4 pt-4 border-t-2 border-black">
+                <button className="btn bg-gray-200" onClick={onClose}>
                   Cancel
                 </button>
-                <button className="save-btn" onClick={handleSave}>
+                <button className="btn bg-black text-white" onClick={handleSave}>
                   Save Field Trips
                 </button>
               </div>

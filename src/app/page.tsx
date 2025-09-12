@@ -1,4 +1,3 @@
-// src/app/page.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -22,7 +21,7 @@ export default function HomePage() {
 
   return (
     <div className="loading-screen">
-      <div className="loading-spinner">Redirecting...</div>
+      <div className="loading-content">Redirecting...</div>
     </div>
   );
 }

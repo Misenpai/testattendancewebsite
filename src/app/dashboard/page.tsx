@@ -1,4 +1,3 @@
-// src/app/dashboard/page.tsx - Fixed version
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -8,7 +7,6 @@ import AttendanceTable from "../../components/AttendanceTable";
 import Calendar from "../../components/Calendar";
 import Modal from "../../components/Modal";
 import type { ApiResponse, User } from "../../types";
-import * as XLSX from "xlsx";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -64,33 +62,6 @@ export default function Dashboard() {
     return () => clearInterval(pollInterval);
   }, [user, loadData]); // Added loadData to deps
 
-  const handleDownloadExcel = (user: User) => {
-    const attendanceRows = user.attendances.map((att) => ({
-      Date: new Date(att.date).toLocaleDateString(),
-      "Check-in Time": att.checkinTime
-        ? new Date(att.checkinTime).toLocaleTimeString()
-        : "N/A",
-      "Check-out Time": att.checkoutTime
-        ? new Date(att.checkoutTime).toLocaleTimeString()
-        : "Not Checked Out",
-      Session: att.sessionType || "N/A",
-      Type: att.attendanceType || "In Progress",
-      "Location Type": att.locationType || "CAMPUS",
-      Location: att.takenLocation || "Not specified",
-      Status: att.checkoutTime ? "Completed" : "In Progress",
-      "Has Photo": att.photo ? "Yes" : "No",
-      "Has Audio": att.audio ? "Yes" : "No",
-    }));
-
-    const ws = XLSX.utils.json_to_sheet(attendanceRows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Attendance");
-
-    XLSX.writeFile(
-      wb,
-      `${user.username}_attendance_${filters.month}_${filters.year}.xlsx`,
-    );
-  };
 
   const handleDateSelect = (date: string, attendances: any[]) => {
     setSelectedDate(date);
@@ -109,6 +80,7 @@ export default function Dashboard() {
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, month: parseInt(e.target.value) }))
           }
+          className="select-brutal"
         >
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>
@@ -122,12 +94,15 @@ export default function Dashboard() {
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, year: parseInt(e.target.value) }))
           }
+          className="select-brutal"
         >
           <option value="2025">2025</option>
           <option value="2024">2024</option>
         </select>
 
-        <button onClick={loadData}>Refresh</button>
+        <button onClick={loadData} className="btn-brutal">
+          Refresh
+        </button>
       </div>
 
       <Calendar 
@@ -142,7 +117,7 @@ export default function Dashboard() {
         loading={loading}
         error={error}
         onViewDetails={(user) => setModalData(user)}
-        selectedDate={selectedDate} // Now undefined compatible
+        selectedDate={selectedDate}
         dateAttendances={dateAttendances}
       />
 

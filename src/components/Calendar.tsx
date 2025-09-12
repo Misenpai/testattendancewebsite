@@ -1,4 +1,4 @@
-// src/app/components/Calendar.tsx - Fixed version (assuming similar issue; added username handling)
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -6,7 +6,7 @@ import { api } from "../utils/api";
 import type { CalendarDay, User } from "../types";
 
 interface ExtendedAttendance {
-  username?: string; // Added for compatibility
+  username?: string; 
 }
 
 interface CalendarProps {
@@ -63,7 +63,7 @@ export default function Calendar({ month, year, users, onDateClick }: CalendarPr
             attendances[user.employeeNumber] = {
               present: true,
               type: dayAttendance.attendanceType === "FULL_DAY" ? "FULL_DAY" : dayAttendance.attendanceType === "HALF_DAY" ? "HALF_DAY" : "IN_PROGRESS",
-              username: user.username, // Ensure username is available
+              username: user.username, 
             };
           } else if (!isHoliday && !isWeekend) {
             attendances[user.employeeNumber] = {
@@ -89,7 +89,7 @@ export default function Calendar({ month, year, users, onDateClick }: CalendarPr
     } finally {
       setLoading(false);
     }
-  }, [month, year, users]); // Added dependencies
+  }, [month, year, users]); 
 
   useEffect(() => {
     loadCalendarData();
@@ -102,7 +102,7 @@ export default function Calendar({ month, year, users, onDateClick }: CalendarPr
         const dateAttendances = attendancesRes.data.flatMap((user: User) => 
           user.attendances
             .filter((att: any) => new Date(att.date).toISOString().split('T')[0] === dateStr)
-            .map((att: any) => ({ ...att, username: user.username })) // Add username
+            .map((att: any) => ({ ...att, username: user.username })) 
         );
         onDateClick?.(dateStr, dateAttendances);
       }

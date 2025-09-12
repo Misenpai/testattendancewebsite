@@ -1,297 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import type { User, Photo, Audio, Attendance } from "../types";
+import type { User, Attendance } from "../types";
 
 interface ModalProps {
   user: User;
   onClose: () => void;
 }
-
-const modalStyles = `
-/* Variables for colors */
-:root {
-  --color-primary: #007bff;
-  --color-secondary: #6c757d;
-  --color-success: #28a745;
-  --color-info: #17a2b8;
-  --color-warning: #ffc107;
-  --color-danger: #dc3545;
-  --color-light: #f8f9fa;
-  --color-dark: #343a40;
-}
-
-/* Modal Backdrop */
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-/* Modal Container */
-.modal-container {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 700px;
-  max-height: 90vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Modal Header */
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid #e9ecef;
-  background-color: #f8f9fa;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.modal-title {
-  margin: 0;
-  font-size: 1.5rem;
-  color: var(--color-dark);
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 2rem;
-  line-height: 1;
-  color: var(--color-secondary);
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.close-btn:hover {
-  color: var(--color-dark);
-}
-
-/* Modal Body */
-.modal-body {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.modal-info {
-  line-height: 1.6;
-  font-size: 1rem;
-  color: #555;
-  background-color: var(--color-light);
-  padding: 1rem;
-  border-radius: 6px;
-}
-
-.card {
-  background-color: #fefefe;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Stats Summary */
-.stats-summary h3, .section-title {
-  margin-top: 0;
-  font-size: 1.25rem;
-  color: var(--color-dark);
-  border-bottom: 2px solid var(--color-primary);
-  display: inline-block;
-  padding-bottom: 5px;
-}
-
-.stats-row {
-  display: flex;
-  justify-content: space-around;
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 1.1rem;
-}
-
-.stat-item strong {
-  color: #333;
-}
-
-.stat-item span {
-  font-weight: 600;
-  color: var(--color-primary);
-  margin-top: 5px;
-}
-
-/* Search Container */
-.search-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.date-search-input {
-  flex-grow: 1;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.clear-search-btn {
-  padding: 0.75rem 1rem;
-  background-color: var(--color-secondary);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.2s;
-}
-
-.clear-search-btn:hover {
-  background-color: #5a6268;
-}
-
-/* Attendance List and Items */
-.attendance-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.no-records-message {
-  text-align: center;
-  color: var(--color-secondary);
-  font-style: italic;
-  padding: 2rem;
-}
-
-.attendance-item {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.attendance-date {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-dark);
-  border-bottom: 1px dashed #ccc;
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.attendance-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.detail-item {
-  flex: 1;
-  min-width: 200px;
-}
-
-.badge {
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-left: 8px;
-  display: inline-block;
-}
-
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-left: 8px;
-}
-
-.status-badge.completed {
-  background-color: var(--color-success);
-  color: #fff;
-}
-
-.status-badge.in-progress {
-  background-color: var(--color-warning);
-  color: var(--color-dark);
-}
-
-/* Media Links */
-.media-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 1rem;
-}
-
-.media-link {
-  padding: 8px 12px;
-  border-radius: 4px;
-  text-decoration: none;
-  color: white;
-  font-weight: 500;
-  transition: background-color 0.2s;
-  font-size: 0.9rem;
-}
-
-.media-link.photo-link {
-  background-color: var(--color-primary);
-}
-.media-link.photo-link:hover {
-  background-color: #0056b3;
-}
-
-.media-link.audio-link {
-  background-color: var(--color-secondary);
-}
-.media-link.audio-link:hover {
-  background-color: #5a6268;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .modal-container {
-    max-width: 95%;
-  }
-
-  .stats-row, .detail-row {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-}
-`;
 
 export default function Modal({
   user,
@@ -341,188 +56,185 @@ export default function Modal({
   };
 
   return (
-    <>
-      <style>{modalStyles}</style>
-      <div className="modal-backdrop" onClick={handleBackdropClick}>
-        <div className="modal-container">
-          <div className="modal-header">
-            <h2 className="modal-title">
-              {user.username} - Attendance Details
-            </h2>
-            <button className="close-btn" onClick={onClose}>
-              &times;
-            </button>
+    <div className="modal-backdrop" onClick={handleBackdropClick}>
+      <div className="modal-container">
+        <div className="modal-header">
+          <h2 className="modal-title">
+            {user.username} - Attendance Details
+          </h2>
+          <button className="close-btn" onClick={onClose}>
+            &times;
+          </button>
+        </div>
+        <div className="modal-body p-6 flex flex-col gap-6">
+          <div className="modal-info leading-relaxed text-base text-gray-600 bg-gray-50 p-4 rounded-md">
+            <strong>Employee Number:</strong> {user.employeeNumber}
+            <br />
+            <strong>Employee Class:</strong> {user.empClass}
+            <br />
+            <strong>Projects:</strong>{" "}
+            {user.projects.map((p) => p.projectCode).join(", ")}
+            <br />
           </div>
-          <div className="modal-body">
-            <div className="modal-info">
-              <strong>Employee Number:</strong> {user.employeeNumber}
-              <br />
-              <strong>Employee Class:</strong> {user.empClass}
-              <br />
-              <strong>Projects:</strong>{" "}
-              {user.projects.map((p) => p.projectCode).join(", ")}
-              <br />
-            </div>
 
-            {user.monthlyStatistics && (
-              <div className="stats-summary card">
-                <h3>Monthly Summary</h3>
-                <div className="stats-row">
-                  <div className="stat-item">
-                    <strong>Total Days:</strong>{" "}
-                    <span>{user.monthlyStatistics.totalDays.toFixed(1)}</span>
-                  </div>
-                  <div className="stat-item">
-                    <strong>Full Days:</strong>{" "}
-                    <span>{user.monthlyStatistics.fullDays}</span>
-                  </div>
-                  <div className="stat-item">
-                    <strong>Half Days:</strong>{" "}
-                    <span>{user.monthlyStatistics.halfDays}</span>
-                  </div>
+          {user.monthlyStatistics && (
+            <div className="stats-summary card bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+              <h3 className="mt-0 text-xl text-gray-800 border-b-2 border-blue-500 inline-block pb-1">Monthly Summary</h3>
+              <div className="stats-row flex justify-around text-center mt-4">
+                <div className="stat-item flex flex-col items-center text-lg">
+                  <strong className="text-gray-700">Total Days:</strong>{" "}
+                  <span className="font-semibold text-blue-600 mt-1">{user.monthlyStatistics.totalDays.toFixed(1)}</span>
+                </div>
+                <div className="stat-item flex flex-col items-center text-lg">
+                  <strong className="text-gray-700">Full Days:</strong>{" "}
+                  <span className="font-semibold text-blue-600 mt-1">{user.monthlyStatistics.fullDays}</span>
+                </div>
+                <div className="stat-item flex flex-col items-center text-lg">
+                  <strong className="text-gray-700">Half Days:</strong>{" "}
+                  <span className="font-semibold text-blue-600 mt-1">{user.monthlyStatistics.halfDays}</span>
                 </div>
               </div>
-            )}
-
-            <h3 className="section-title">Attendance Records</h3>
-
-            <div className="search-container">
-              <label htmlFor="dateSearch">Filter by Date:</label> {/* Added label */}
-              <input
-                id="dateSearch"
-                type="date"
-                value={searchDate}
-                onChange={(e) => setSearchDate(e.target.value)}
-                className="date-search-input"
-              />
-              {searchDate && (
-                <button
-                  className="clear-search-btn"
-                  onClick={() => setSearchDate("")}
-                >
-                  Clear
-                </button>
-              )}
             </div>
+          )}
 
-            {filteredAttendances.length === 0 ? (
-              <p className="no-records-message">
-                No attendance records found{" "}
-                {searchDate ? "for the selected date" : "for this month"}.
-              </p>
-            ) : (
-              <div className="attendance-list">
-                {filteredAttendances.map((att, index: number) => {
-                  const checkInDate = new Date(att.checkinTime);
-                  const checkOutDate = att.checkoutTime
-                    ? new Date(att.checkoutTime)
-                    : null;
+          <h3 className="section-title mt-0 text-xl text-gray-800 border-b-2 border-blue-500 inline-block pb-1">Attendance Records</h3>
 
-                  return (
-                    <div key={index} className="attendance-item card">
-                      <div className="attendance-date">
-                        {checkInDate.toLocaleDateString("en-US", {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
-                      </div>
-                      <div className="attendance-details">
-                        <div className="detail-row">
-                          <div className="detail-item">
-                            <strong>Session:</strong>
-                            <span
-                              className="badge"
-                              style={{
-                                backgroundColor: getSessionColor(
-                                  att.sessionType
-                                ),
-                              }}
-                            >
-                              {att.sessionType || "N/A"}
-                            </span>
-                          </div>
-                          <div className="detail-item">
-                            <strong>Type:</strong>
-                            <span
-                              className="badge"
-                              style={{
-                                backgroundColor: getAttendanceTypeColor(att),
-                              }}
-                            >
-                              {getAttendanceTypeLabel(att)}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="detail-row">
-                          <div className="detail-item">
-                            <strong>Check-in:</strong>{" "}
-                            <span>{checkInDate.toLocaleTimeString()}</span>
-                          </div>
-                          {checkOutDate && (
-                            <div className="detail-item">
-                              <strong>Check-out:</strong>{" "}
-                              <span>{checkOutDate.toLocaleTimeString()}</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="detail-row">
-                          <div className="detail-item">
-                            <strong>Location:</strong>{" "}
-                            <span>
-                              {att.location?.address ||
-                                att.takenLocation ||
-                                "Not specified"}
-                            </span>
-                          </div>
-                          <div className="detail-item">
-                            <strong>Status:</strong>
-                            <span
-                              className={`status-badge ${
-                                att.isCheckedOut ? "completed" : "in-progress"
-                              }`}
-                            >
-                              {att.isCheckedOut ? "Completed" : "In Progress"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="media-links">
-                        {att.photo && (
-                          <a
-                            href={att.photo.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="media-link photo-link"
-                          >
-                            📷 View Photo
-                          </a>
-                        )}
-                        {att.audio && (
-                          <a
-                            href={att.audio.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="media-link audio-link"
-                          >
-                            🎵 Audio (
-                            {att.audio.duration
-                              ? att.audio.duration + "s"
-                              : "unknown"}
-                            )
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+          <div className="search-container flex items-center gap-2">
+            <label htmlFor="dateSearch">Filter by Date:</label>
+            <input
+              id="dateSearch"
+              type="date"
+              value={searchDate}
+              onChange={(e) => setSearchDate(e.target.value)}
+              className="date-search-input flex-grow p-3 border border-gray-300 rounded-md text-base"
+            />
+            {searchDate && (
+              <button
+                className="clear-search-btn p-3 bg-gray-500 text-white border-none rounded-md cursor-pointer text-base transition-colors duration-200 hover:bg-gray-600"
+                onClick={() => setSearchDate("")}
+              >
+                Clear
+              </button>
             )}
           </div>
+
+          {filteredAttendances.length === 0 ? (
+            <p className="no-records-message text-center text-gray-500 italic p-8">
+              No attendance records found{" "}
+              {searchDate ? "for the selected date" : "for this month"}.
+            </p>
+          ) : (
+            <div className="attendance-list flex flex-col gap-6">
+              {filteredAttendances.map((att, index: number) => {
+                const checkInDate = new Date(att.checkinTime);
+                const checkOutDate = att.checkoutTime
+                  ? new Date(att.checkoutTime)
+                  : null;
+
+                return (
+                  <div key={index} className="attendance-item card bg-white border border-gray-200 rounded-lg p-6 shadow-sm flex flex-col gap-4">
+                    <div className="attendance-date text-xl font-semibold text-gray-800 border-b border-dashed border-gray-300 pb-2 mb-2">
+                      {checkInDate.toLocaleDateString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </div>
+                    <div className="attendance-details flex flex-col gap-3">
+                      <div className="detail-row flex justify-between flex-wrap gap-4">
+                        <div className="detail-item flex-1 min-w-[200px]">
+                          <strong>Session:</strong>
+                          <span
+                            className="badge text-white py-1 px-2.5 rounded-full text-sm font-medium ml-2 inline-block"
+                            style={{
+                              backgroundColor: getSessionColor(
+                                att.sessionType
+                              ),
+                            }}
+                          >
+                            {att.sessionType || "N/A"}
+                          </span>
+                        </div>
+                        <div className="detail-item flex-1 min-w-[200px]">
+                          <strong>Type:</strong>
+                          <span
+                            className="badge text-white py-1 px-2.5 rounded-full text-sm font-medium ml-2 inline-block"
+                            style={{
+                              backgroundColor: getAttendanceTypeColor(att),
+                            }}
+                          >
+                            {getAttendanceTypeLabel(att)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="detail-row flex justify-between flex-wrap gap-4">
+                        <div className="detail-item flex-1 min-w-[200px]">
+                          <strong>Check-in:</strong>{" "}
+                          <span>{checkInDate.toLocaleTimeString()}</span>
+                        </div>
+                        {checkOutDate && (
+                          <div className="detail-item flex-1 min-w-[200px]">
+                            <strong>Check-out:</strong>{" "}
+                            <span>{checkOutDate.toLocaleTimeString()}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="detail-row flex justify-between flex-wrap gap-4">
+                        <div className="detail-item flex-1 min-w-[200px]">
+                          <strong>Location:</strong>{" "}
+                          <span>
+                            {att.location?.address ||
+                              att.takenLocation ||
+                              "Not specified"}
+                          </span>
+                        </div>
+                        <div className="detail-item flex-1 min-w-[200px]">
+                          <strong>Status:</strong>
+                          <span
+                            className={`status-badge py-1 px-2.5 rounded-full text-sm font-semibold ml-2 ${
+                              att.isCheckedOut ? "bg-green-500 text-white" : "bg-yellow-400 text-gray-800"
+                            }`}
+                          >
+                            {att.isCheckedOut ? "Completed" : "In Progress"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="media-links flex flex-wrap gap-2.5 mt-4">
+                      {att.photo && (
+                        <a
+                          href={att.photo.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="media-link py-2 px-3 rounded-md no-underline text-white font-medium transition-colors duration-200 text-sm bg-blue-500 hover:bg-blue-600"
+                        >
+                          📷 View Photo
+                        </a>
+                      )}
+                      {att.audio && (
+                        <a
+                          href={att.audio.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="media-link py-2 px-3 rounded-md no-underline text-white font-medium transition-colors duration-200 text-sm bg-gray-500 hover:bg-gray-600"
+                        >
+                          🎵 Audio (
+                          {att.audio.duration
+                            ? att.audio.duration + "s"
+                            : "unknown"}
+                          )
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

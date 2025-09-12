@@ -108,3 +108,21 @@ export interface AuthUser {
   token: string;
   isSSO?: boolean; // Add this
 }
+
+export type DebugInfo = {
+  ssoData?: {
+    username: string;
+    projectCodes: string[];
+    timestamp: number;
+  };
+  authUser?: {
+    username: string;
+    projectCode: string;
+    projects: string[];
+    token: string;
+    isSSO: boolean;
+  };
+  tokenAge?: number;
+  error?: unknown;
+  token?: string | null;
+};

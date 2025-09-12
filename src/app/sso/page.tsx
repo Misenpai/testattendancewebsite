@@ -1,22 +1,22 @@
-// src/app/sso/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "../../hooks/useAuth";
 import Link from "next/link";
+import { DebugInfo } from "@/types";
+
+
 
 export default function SSOPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { setSSOUser } = useAuth();
   const [error, setError] = useState("");
-  const [debug, setDebug] = useState<any>(null);
+  const [debug, setDebug] = useState<DebugInfo | null>(null);
   const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
     const token = searchParams.get("token");
-    console.log("Received token:", token);
 
     if (!token) {
       setError("No SSO token provided");
@@ -25,22 +25,18 @@ export default function SSOPage() {
 
     try {
       const decodedToken = atob(token);
-      console.log("Decoded token:", decodedToken);
-
       const ssoData = JSON.parse(decodedToken);
-      console.log("Parsed SSO data:", ssoData);
 
       if (
         !ssoData.username ||
         !ssoData.projectCodes ||
         !Array.isArray(ssoData.projectCodes)
       ) {
-        console.error("Invalid SSO data structure:", ssoData);
         throw new Error("Invalid SSO data structure");
       }
 
       const tokenAge = Date.now() - ssoData.timestamp;
-      const maxAge = 5 * 60 * 1000; // 5 minutes
+      const maxAge = 5 * 60 * 1000;
       if (tokenAge > maxAge) {
         throw new Error("SSO token expired");
       }
@@ -53,24 +49,17 @@ export default function SSOPage() {
         isSSO: true,
       };
 
-      console.log("Created auth user:", authUser);
       setDebug({ ssoData, authUser, tokenAge });
 
-      // Set the user in auth context
       setSSOUser(authUser);
-
-      // Set redirecting state
       setRedirecting(true);
 
-      // Force navigation using window.location for better reliability
       setTimeout(() => {
-        console.log("Redirecting to dashboard...");
         window.location.href = "/dashboard";
       }, 2000);
     } catch (err) {
-      console.error("SSO Error:", err);
       setError(
-        `Invalid SSO token: ${err instanceof Error ? err.message : "Unknown error"}`,
+        `Invalid SSO token: ${err instanceof Error ? err.message : "Unknown error"}`
       );
       setDebug({ error: err, token });
     }
@@ -83,17 +72,9 @@ export default function SSOPage() {
           <h2>SSO Authentication Failed</h2>
           <p>{error}</p>
           {debug && (
-            <div
-              style={{
-                marginTop: "20px",
-                textAlign: "left",
-                background: "#f0f0f0",
-                padding: "10px",
-                borderRadius: "5px",
-              }}
-            >
+            <div className="mt-5 text-left bg-gray-100 p-2.5 rounded">
               <h3>Debug Info:</h3>
-              <pre style={{ fontSize: "12px", overflow: "auto" }}>
+              <pre className="text-xs overflow-auto">
                 {JSON.stringify(debug, null, 2)}
               </pre>
             </div>
@@ -114,16 +95,7 @@ export default function SSOPage() {
             : "Authenticating via SSO..."}
         </p>
         {debug && (
-          <div
-            style={{
-              marginTop: "20px",
-              textAlign: "left",
-              background: "#f0f0f0",
-              padding: "10px",
-              borderRadius: "5px",
-              maxWidth: "600px",
-            }}
-          >
+          <div className="mt-5 text-left bg-gray-100 p-2.5 rounded max-w-xl">
             <h3>Debug Info:</h3>
             <p>
               <strong>Username:</strong> {debug.authUser?.username}
@@ -135,7 +107,7 @@ export default function SSOPage() {
               <strong>Token Age:</strong> {debug.tokenAge}ms
             </p>
             {redirecting && (
-              <p style={{ color: "green" }}>
+              <p className="text-green-600">
                 <strong>Status:</strong> Redirecting in 2 seconds...
               </p>
             )}

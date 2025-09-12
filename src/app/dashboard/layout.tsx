@@ -1,11 +1,9 @@
-// src/app/dashboard/layout.tsx
 "use client";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Header from "../../components/Header";
-
 
 export default function DashboardLayout({
   children,
@@ -22,7 +20,6 @@ export default function DashboardLayout({
     if (!isLoading && !user) {
       console.log("No user found, should redirect");
       setShouldRedirect(true);
-      // Add delay to prevent immediate redirect loops
       const timer = setTimeout(() => {
         router.push("/");
       }, 1000);
@@ -51,7 +48,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="dashboard-layout" style={{ backgroundColor: '#fdfbfc' }}>
+    <div className="dashboard-layout bg-[#fdfbfc]">
       <div className="main-content">
         <Header />
         {children}

@@ -1,3 +1,4 @@
+@import "tailwindcss";
 
 * {
   margin: 0;
@@ -5,16 +6,13 @@
   box-sizing: border-box;
 }
 
-
-
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-  background-color: #fdfbfc; /* Simple off-white background */
-  color: #000; /* Black text for contrast */
+  background-color: #fdfbfc;
+  color: #000;
 }
 
-/* Neo-Brutalism core styles */
 .border-brutal {
   border: 2px solid #000 !important;
   border-radius: 0 !important;
@@ -32,7 +30,6 @@ body {
   box-shadow: 8px 8px 0px rgba(0,0,0,1) !important;
 }
 
-/* Button component from Neo-Brutalism */
 .btn {
   @apply border-brutal bg-white text-black px-4 py-2 font-bold cursor-pointer transition-all;
 }
@@ -45,12 +42,10 @@ body {
   @apply shadow-brutal-sm translate-x-[2px] translate-y-[2px];
 }
 
-/* Card component */
 .card {
   @apply bg-white border-brutal shadow-brutal p-6 rounded-none;
 }
 
-/* Table styles simplified */
 .users-table {
   @apply bg-white border-brutal rounded-none overflow-hidden;
 }
@@ -71,7 +66,6 @@ th {
   @apply bg-gray-50;
 }
 
-/* Calendar simplified */
 .calendar {
   @apply bg-white border-brutal rounded-none p-6 mb-6;
 }
@@ -92,12 +86,10 @@ th {
   @apply bg-blue-50 border-2 border-blue-500;
 }
 
-/* Legend badges */
 .legend-item {
   @apply px-2 py-1 text-xs font-bold rounded-none border border-black inline-block;
 }
 
-/* Modal basic */
 .modal {
   @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4;
 }
@@ -110,12 +102,10 @@ th {
   @apply flex justify-between items-center p-6 bg-gray-50 border-b-brutal sticky top-0 z-10;
 }
 
-/* Stats badges */
 .status-badge, .project-tag {
   @apply px-2 py-1 text-xs font-bold rounded-none border border-black inline-block;
 }
 
-/* Loading and error */
 .loading, .error {
   @apply text-center py-8 text-black;
 }
@@ -124,7 +114,6 @@ th {
   @apply bg-red-50 border border-red-200;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .dashboard-content {
     @apply p-4;
@@ -147,7 +136,6 @@ th {
   }
 }
 
-/* Add to src/app/globals.css - Neo-Brutalism classes to replace inline styles */
 .loading-screen {
   display: flex;
   justify-content: center;
@@ -171,7 +159,7 @@ th {
   background: white;
   color: red;
 }
-/* Stat badges */
+
 .stat-badge {
   padding: 0.25rem 0.5rem;
   border-radius: 0;
@@ -201,7 +189,6 @@ th {
   color: #495057;
 }
 
-/* Manage button */
 .manage-trips-btn {
   background: white;
   color: black;
@@ -218,7 +205,6 @@ th {
   box-shadow: 4px 4px 0px rgba(0,0,0,1);
 }
 
-/* View button */
 .view-btn {
   background: black;
   color: white;
@@ -234,7 +220,6 @@ th {
   background: #333;
 }
 
-/* Date attendance details */
 .date-attendance-details {
   margin-top: 1rem;
   padding: 1rem;
@@ -262,7 +247,6 @@ th {
   color: black;
 }
 
-/* Remove inline styles from table elements - use classes */
 .user-row td {
   padding: 1rem;
   color: black;
@@ -301,4 +285,22 @@ th {
   gap: 0.5rem;
 }
 
-/* Calendar click handler integration - no changes needed here */
+.modal-backdrop {
+  @apply fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[1000] p-4;
+}
+
+.modal-container {
+  @apply bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col;
+}
+
+.modal-header {
+  @apply flex justify-between items-center p-6 border-b border-gray-200 bg-gray-50 rounded-t-lg sticky top-0 z-10;
+}
+
+.modal-title {
+  @apply m-0 text-2xl text-gray-800;
+}
+
+.close-btn {
+  @apply bg-transparent border-none text-3xl leading-none text-gray-500 cursor-pointer transition-colors duration-200 hover:text-gray-800;
+}
